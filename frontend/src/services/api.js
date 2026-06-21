@@ -27,7 +27,9 @@ api.interceptors.response.use(
 
 // ---- Chat ----
 export const sendChat = async (query, sessionId = null) => {
-  const { data } = await api.post('/chat', { query, session_id: sessionId });
+  const { data } = await api.post('/chat', { query, session_id: sessionId }, {
+    timeout: 600000, // 10 mins timeout for multi-agent RAG on CPU
+  });
   return data;
 };
 
@@ -36,6 +38,8 @@ export const uploadDocument = async (file, onProgress) => {
   const formData = new FormData();
   formData.append('file', file);
   const { data } = await api.post('/upload', formData, {
+    headers: { 'Content-Type': undefined },
+    timeout: 300000, // 5 mins timeout for heavy CPU embedding
     onUploadProgress: (e) => {
       if (onProgress && e.total) {
         onProgress(Math.round((e.loaded * 100) / e.total));

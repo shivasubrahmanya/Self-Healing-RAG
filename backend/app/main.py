@@ -10,6 +10,11 @@ Configures:
 """
 from __future__ import annotations
 import os
+
+# Set environment variables for Windows to prevent Intel Fortran/MKL/OpenMP crashes
+os.environ["FOR_DISABLE_CONSOLE_CTRL_HANDLER"] = "1"
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+
 import time
 import uuid
 from contextlib import asynccontextmanager

@@ -75,11 +75,13 @@ async def upload_document(file: UploadFile = File(...)) -> UploadResponse:
             content_type=file.content_type or "application/octet-stream",
         )
     except UnsupportedFileTypeError as exc:
+        logger.warning("Unsupported file type", error=exc.message, filename=file.filename)
         raise HTTPException(
             status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
             detail=exc.message,
         )
     except IngestionError as exc:
+        logger.warning("Ingestion failed", error=exc.message, filename=file.filename)
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=exc.message,
