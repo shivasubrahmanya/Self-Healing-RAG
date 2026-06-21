@@ -3,6 +3,7 @@ import { BarChart3, TrendingUp, RefreshCw } from 'lucide-react';
 import {
   LineChart, Line, AreaChart, Area, XAxis, YAxis,
   CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
+  BarChart, Bar,
 } from 'recharts';
 import { getMetrics } from '../services/api';
 import { useAppStore } from '../store/appStore';

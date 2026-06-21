@@ -37,6 +37,10 @@ class Settings(BaseSettings):
     ollama_host: str = "http://localhost:11434"
     ollama_model: str = "llama3.1:latest"
 
+    # ---- Gemini ----
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-2.5-flash"
+
     # ---- LangSmith ----
     langchain_tracing_v2: bool = True
     langchain_api_key: str = ""

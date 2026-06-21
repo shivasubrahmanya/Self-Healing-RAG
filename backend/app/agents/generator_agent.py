@@ -77,6 +77,7 @@ class GeneratorAgent:
                 prompt=prompt,
                 system_prompt=GENERATOR_SYSTEM_PROMPT,
                 temperature=0.1,
+                use_gemini=True,
             )
         except Exception as exc:
             logger.error("Answer generation failed", error=str(exc))

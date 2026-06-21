@@ -97,6 +97,7 @@ class HallucinationAgent:
             result = await self._llm.generate_json(
                 prompt=prompt,
                 system_prompt=HALLUCINATION_SYSTEM_PROMPT,
+                use_gemini=True,
             )
         except Exception as exc:
             logger.warning("Hallucination check failed, assuming grounded", error=str(exc))
