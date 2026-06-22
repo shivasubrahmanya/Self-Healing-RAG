@@ -1,8 +1,5 @@
 import { FileText } from 'lucide-react';
 
-/**
- * SourcesPanel — displays cited document chunks on the right side of chat.
- */
 export default function SourcesPanel({ sources = [], healing = null }) {
   if (!sources.length && !healing?.attempted) {
     return (
@@ -12,57 +9,57 @@ export default function SourcesPanel({ sources = [], healing = null }) {
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',
-        gap: 16,
-        color: 'var(--color-text-muted)',
+        gap: 12,
+        color: 'var(--text-secondary)',
         padding: 24,
       }}>
-        <FileText size={24} style={{ opacity: 0.2 }} />
+        <FileText size={24} style={{ opacity: 0.15, marginBottom: 8 }} />
         <p style={{ 
           fontSize: 12, 
           textAlign: 'center', 
-          fontFamily: 'Space Grotesk, sans-serif',
-          textTransform: 'uppercase', 
-          letterSpacing: '0.05em' 
+          fontFamily: 'Inter',
+          letterSpacing: '0.05em',
+          textTransform: 'uppercase'
         }}>
-          telemetry data offline
+          awaiting search trace...
         </p>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '24px', overflowY: 'auto', height: '100%' }}>
+    <div style={{ padding: '24px', overflowY: 'auto', height: '100%', color: 'var(--text-light)' }}>
       {/* Healing info */}
       {healing?.attempted && (
         <div style={{
           marginBottom: 24,
           padding: '16px',
-          background: 'rgba(245, 158, 11, 0.02)',
-          border: '1px solid rgba(245, 158, 11, 0.15)',
-          borderRadius: 2,
+          background: 'var(--accent-light)',
+          border: '1px solid rgba(99, 102, 241, 0.15)',
+          borderRadius: '8px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
             <div className="healing-dot" />
             <span style={{ 
               fontSize: 11, 
-              fontFamily: 'JetBrains Mono, monospace', 
-              fontWeight: 700, 
-              color: 'var(--color-amber)', 
+              fontFamily: 'Inter, sans-serif', 
+              fontWeight: 600, 
+              color: 'var(--accent)', 
               textTransform: 'uppercase',
               letterSpacing: '0.05em'
             }}>
-              self_healing_active
+              self-healing loop active
             </span>
           </div>
-          <p style={{ fontSize: 12, color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
+          <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
             Triggered {healing.retries} search expansion retry iteration{healing.retries !== 1 ? 's' : ''} to reach sufficiency threshold.
           </p>
           {healing.rewritten_queries?.length > 0 && (
             <div style={{ marginTop: 12 }}>
               <p style={{ 
                 fontSize: 10, 
-                fontFamily: 'JetBrains Mono, monospace', 
-                color: 'var(--color-text-muted)', 
+                fontFamily: 'Inter, sans-serif', 
+                color: 'var(--text-muted)', 
                 textTransform: 'uppercase', 
                 letterSpacing: '0.05em',
                 marginBottom: 6 
@@ -72,10 +69,10 @@ export default function SourcesPanel({ sources = [], healing = null }) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 {healing.rewritten_queries.map((q, i) => (
                   <div key={i} style={{
-                    fontSize: 11,
-                    color: 'var(--color-text-secondary)',
+                    fontSize: 12,
+                    color: 'var(--text-light)',
                     paddingLeft: 10,
-                    borderLeft: '1px solid var(--color-amber)',
+                    borderLeft: '2px solid var(--accent)',
                     fontStyle: 'italic',
                   }}>
                     "{q}"
@@ -87,19 +84,19 @@ export default function SourcesPanel({ sources = [], healing = null }) {
         </div>
       )}
 
-      {/* Sources header */}
+      {/* Sources list */}
       {sources.length > 0 && (
         <>
           <div style={{
-            fontSize: 10,
-            fontFamily: 'JetBrains Mono, monospace',
+            fontSize: 11,
+            fontFamily: 'Inter, sans-serif',
             fontWeight: 600,
-            color: 'var(--color-text-muted)',
+            color: 'var(--text-secondary)',
             textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            marginBottom: 14,
+            letterSpacing: '0.05em',
+            marginBottom: 16,
           }}>
-            {sources.length} document chunk{sources.length !== 1 ? 's' : ''} mapped
+            {sources.length} document chunk{sources.length !== 1 ? 's' : ''} retrieved
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -116,71 +113,67 @@ export default function SourcesPanel({ sources = [], healing = null }) {
 function SourceCard({ source, index }) {
   const score = Math.round(source.relevance_score * 100);
   const scoreColor =
-    score >= 85 ? 'var(--color-emerald)' :
-    score >= 70 ? 'var(--color-amber)' :
-    'var(--color-rose)';
+    score >= 70 ? 'var(--color-emerald)' : 'var(--color-amber)';
 
   const stepStr = index < 10 ? `0${index}` : `${index}`;
 
   return (
-    <div className="source-card animate-fade-in">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+    <div className="telemetry-card" style={{ padding: '16px 20px', gap: 12 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{
-            fontFamily: 'JetBrains Mono, monospace',
-            fontSize: 10,
-            color: 'var(--color-text-muted)'
+            fontFamily: 'monospace',
+            fontSize: 11,
+            color: 'var(--text-muted)',
+            fontWeight: 600
           }}>
             .{stepStr}
           </div>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#ffffff', fontFamily: 'Space Grotesk, sans-serif' }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-light)', fontFamily: 'Inter, sans-serif' }}>
             {source.document_name}
           </div>
         </div>
         <div style={{
-          fontFamily: 'JetBrains Mono, monospace',
-          fontSize: 10, 
-          fontWeight: 700, 
+          fontFamily: 'Inter, sans-serif',
+          fontSize: 11, 
+          fontWeight: 600, 
           color: scoreColor,
-          border: `1px solid ${scoreColor}22`,
-          background: `${scoreColor}05`,
-          padding: '2px 6px', 
-          borderRadius: 2,
+          letterSpacing: '0.02em',
         }}>
-          relevance {score}%
+          {score}% relevance
         </div>
       </div>
 
       <div style={{ 
-        fontFamily: 'JetBrains Mono, monospace', 
-        fontSize: 10, 
-        color: 'var(--color-text-muted)', 
-        marginBottom: 10 
+        fontFamily: 'Inter, sans-serif', 
+        fontSize: 11, 
+        color: 'var(--text-muted)', 
+        textTransform: 'lowercase'
       }}>
-        PAGE_{source.page}
+        page {source.page}
       </div>
 
       <p style={{
         fontSize: 12,
-        color: 'var(--color-text-secondary)',
-        lineHeight: 1.6,
+        color: 'var(--text-secondary)',
+        lineHeight: 1.5,
         display: '-webkit-box',
         WebkitLineClamp: 3,
         WebkitBoxOrient: 'vertical',
         overflow: 'hidden',
-        marginBottom: 12
       }}>
         {source.text_snippet}
       </p>
 
-      {/* Relevance bar */}
+      {/* Relevance progress bar */}
       <div>
-        <div className="progress-bar-track">
+        <div className="progress-bar-track" style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 2 }}>
           <div
             className="progress-bar-fill"
             style={{
               width: `${score}%`,
               background: scoreColor,
+              borderRadius: 2
             }}
           />
         </div>

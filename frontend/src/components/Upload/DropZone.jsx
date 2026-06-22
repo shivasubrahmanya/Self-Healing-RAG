@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, FileText, AlertCircle, CheckCircle } from 'lucide-react';
 import { uploadDocument } from '../../services/api';
 import { useAppStore } from '../../store/appStore';
 
@@ -44,60 +43,68 @@ export default function DropZone() {
       <div
         {...getRootProps()}
         className={`dropzone ${isDragActive ? 'active' : ''}`}
-        style={{ opacity: uploadStatus === 'uploading' ? 0.7 : 1 }}
+        style={{
+          opacity: uploadStatus === 'uploading' ? 0.7 : 1,
+          border: isDragActive ? '1px solid var(--text-light)' : '1px solid var(--hairline-light)',
+          background: isDragActive ? 'rgba(0, 0, 0, 0.02)' : 'transparent',
+          padding: '24px 32px',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start', /* Left-aligned */
+          gap: 12
+        }}
       >
         <input {...getInputProps()} />
 
-        <div style={{ marginBottom: 16 }}>
-          {uploadStatus === 'success' ? (
-            <CheckCircle size={40} style={{ color: 'var(--color-emerald)', margin: '0 auto' }} />
-          ) : uploadStatus === 'error' ? (
-            <AlertCircle size={40} style={{ color: 'var(--color-rose)', margin: '0 auto' }} />
-          ) : (
-            <Upload size={40} style={{ color: 'var(--color-violet-light)', margin: '0 auto' }} />
-          )}
-        </div>
-
         {uploadStatus === 'uploading' ? (
-          <div>
-            <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: 8 }}>
-              Ingesting document...
+          <div style={{ width: '100%' }}>
+            <p className="serif-display" style={{ fontSize: 18, color: 'var(--text-light)', marginBottom: 10 }}>
+              Indexing document in progress
             </p>
-            <div className="progress-bar-track" style={{ maxWidth: 240, margin: '0 auto 8px' }}>
+            <div className="progress-bar-track" style={{ maxWidth: '100%', marginBottom: 8 }}>
               <div className="progress-bar-fill" style={{ width: `${uploadProgress}%` }} />
             </div>
-            <p style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>{uploadProgress}%</p>
+            <p style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'Inter', letterSpacing: '0.05em' }}>
+              {uploadProgress}% processed
+            </p>
           </div>
         ) : uploadStatus === 'success' ? (
           <div>
-            <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-emerald)', marginBottom: 4 }}>
-              Document indexed successfully!
+            <p className="serif-display" style={{ fontSize: 18, color: 'var(--accent)', marginBottom: 6 }}>
+              Document indexed successfully.
             </p>
-            <p style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>
-              Drop another file to upload
+            <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+              Click or drag another file to update the index.
             </p>
           </div>
         ) : uploadStatus === 'error' ? (
           <div>
-            <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-rose)', marginBottom: 4 }}>
-              Upload failed
+            <p className="serif-display" style={{ fontSize: 18, color: 'var(--color-rose)', marginBottom: 6 }}>
+              Index ingestion failed.
             </p>
-            <p style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>
-              Please check the file format and try again
+            <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+              Verify file format constraints and retry.
             </p>
           </div>
         ) : (
-          <div>
-            <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: 8 }}>
-              {isDragActive ? 'Drop your document here' : 'Drag & drop or click to upload'}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%' }}>
+            <p className="serif-display" style={{ fontSize: 20, lineHeight: 1.2, color: 'var(--text-light)' }}>
+              Add a document to begin indexing
             </p>
-            <div style={{ display: 'flex', gap: 6, justifyContent: 'center', flexWrap: 'wrap' }}>
-              {['PDF', 'DOCX', 'TXT', 'MD'].map((ext) => (
-                <span key={ext} className="badge badge-violet">{ext}</span>
-              ))}
-            </div>
-            <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginTop: 10 }}>
-              Max 50 MB · Chunked at 800 tokens · Indexed in Pinecone
+            
+            <p style={{ fontSize: 12, color: 'var(--text-muted)', maxWidth: 480, lineHeight: 1.5 }}>
+              drag and drop your source file here, or click to browse. supported types: {' '}
+              <span style={{ textDecoration: 'underline', color: 'var(--text-light)' }}>pdf</span>,{' '}
+              <span style={{ textDecoration: 'underline', color: 'var(--text-light)' }}>docx</span>,{' '}
+              <span style={{ textDecoration: 'underline', color: 'var(--text-light)' }}>txt</span>, and{' '}
+              <span style={{ textDecoration: 'underline', color: 'var(--text-light)' }}>md</span>.
+            </p>
+
+            <p style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>
+              maximum file threshold 50 mb &middot; parsed using 800 token chunk limits with 150 token overlap offset
             </p>
           </div>
         )}

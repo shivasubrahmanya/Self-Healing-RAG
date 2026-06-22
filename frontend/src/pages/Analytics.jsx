@@ -7,6 +7,7 @@ import {
 } from 'recharts';
 import { getMetrics } from '../services/api';
 import { useAppStore } from '../store/appStore';
+import SubpageHeader from '../components/Layout/SubpageHeader';
 
 export default function Analytics() {
   const { metrics, metricsLoading, setMetrics, setMetricsLoading } = useAppStore();
@@ -20,7 +21,7 @@ export default function Analytics() {
       setHistory((prev) => [
         ...prev.slice(-19),
         {
-          time: new Date().toLocaleTimeString(),
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
           confidence: Math.round((data.average_confidence || 0) * 100),
           retry_rate: Math.round((data.retry_rate || 0) * 100),
           hallucination_rate: Math.round((data.hallucination_rate || 0) * 100),
@@ -37,14 +38,14 @@ export default function Analytics() {
   }, []);
 
   const statCards = metrics ? [
-    { label: 'Total Queries', value: metrics.total_queries, color: '#ffffff' },
-    { label: 'Avg Confidence', value: `${Math.round(metrics.average_confidence * 100)}%`, color: 'var(--color-emerald)' },
+    { label: 'Total Queries', value: metrics.total_queries, color: 'var(--text-light)' },
+    { label: 'Avg Confidence', value: `${Math.round(metrics.average_confidence * 100)}%`, color: 'var(--accent)' },
     { label: 'Retry Rate', value: `${Math.round(metrics.retry_rate * 100)}%`, color: 'var(--color-amber)' },
-    { label: 'Hallucination Rate', value: `${Math.round(metrics.hallucination_rate * 100)}%`, color: 'var(--color-rose)' },
-    { label: 'Documents', value: metrics.total_uploads, color: '#ffffff' },
-    { label: 'Chunks Indexed', value: metrics.total_chunks_indexed, color: 'var(--color-emerald)' },
-    { label: 'Avg Latency', value: `${metrics.average_response_time_ms?.toFixed(0)}ms`, color: 'var(--color-amber)' },
-    { label: 'Healing Loops', value: metrics.healing_triggered_count, color: 'var(--color-rose)' },
+    { label: 'Hallucination', value: `${Math.round(metrics.hallucination_rate * 100)}%`, color: 'var(--color-rose)' },
+    { label: 'Documents Ingested', value: metrics.total_uploads, color: 'var(--text-light)' },
+    { label: 'Chunks Indexed', value: metrics.total_chunks_indexed, color: 'var(--accent)' },
+    { label: 'Avg Response Latency', value: `${metrics.average_response_time_ms?.toFixed(0)}ms`, color: 'var(--text-light)' },
+    { label: 'Healing Loops Run', value: metrics.healing_triggered_count, color: 'var(--color-rose)' },
   ] : [];
 
   const histogramData = metrics?.confidence_histogram
@@ -55,125 +56,112 @@ export default function Analytics() {
     : [];
 
   return (
-    <div style={{ padding: '48px 32px', maxWidth: 1100, margin: '0 auto' }}>
+    <div className="page-container">
+      <SubpageHeader title="Performance Metrics" />
       {/* Header */}
-      <div style={{ marginBottom: 48, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+      <div style={{ marginBottom: 40, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <div className="step-num">.03 / METRICS</div>
-          <h1 style={{ 
-            fontFamily: 'Space Grotesk, sans-serif', 
-            fontSize: 36, 
-            fontWeight: 700, 
-            textTransform: 'uppercase', 
-            letterSpacing: '0.03em',
-            color: '#ffffff' 
+          <div className="eyebrow" style={{ marginBottom: 12 }}>Metrics</div>
+          <h1 className="serif-display" style={{ 
+            fontSize: '36px', 
+            fontWeight: 700,
+            color: 'var(--text-light)'
           }}>
             Analytics
           </h1>
-          <p style={{ fontSize: 13, color: 'var(--color-text-secondary)', marginTop: 4 }}>
-            Real-time pipeline performance analytics and reliability rates.
+          <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
+            Real-time performance analytics of self-healing RAG loop operations.
           </p>
         </div>
-        <button onClick={loadMetrics} className="btn-ghost" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, padding: '8px 16px' }}>
-          <RefreshCw size={11} style={{ animation: metricsLoading ? 'spin-slow 2s linear infinite' : 'none' }} />
-          sync_metrics
+        <button onClick={loadMetrics} className="btn-ghost" style={{ padding: '10px 18px' }}>
+          <RefreshCw size={13} style={{ animation: metricsLoading ? 'loading 1.5s infinite' : 'none' }} />
+          Sync Metrics
         </button>
       </div>
 
-      {/* Stat cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginBottom: 32 }}>
-        {metricsLoading && !metrics
-          ? Array(8).fill(0).map((_, i) => (
-              <div key={i} className="stat-card">
-                <div className="skeleton" style={{ height: 10, width: 80, marginBottom: 16 }} />
-                <div className="skeleton" style={{ height: 24, width: 50 }} />
-              </div>
-            ))
-          : statCards.map(({ label, value, color }) => (
-              <div key={label} className="stat-card animate-fade-in">
-                <div style={{ 
-                  fontSize: 10, 
-                  color: 'var(--color-text-muted)', 
-                  fontWeight: 700, 
-                  textTransform: 'uppercase', 
-                  letterSpacing: '0.1em', 
-                  marginBottom: 12 
-                }}>
-                  {label}
+      {/* Telemetry Stats Grid */}
+      <div style={{ marginBottom: 40 }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gap: 20,
+          marginTop: 16
+        }}>
+          {metricsLoading && !metrics
+            ? Array(8).fill(0).map((_, i) => (
+                <div key={i} className="telemetry-card">
+                  <div className="skeleton" style={{ height: 12, width: 80, marginBottom: 10 }} />
+                  <div className="skeleton" style={{ height: 32, width: 60 }} />
                 </div>
-                <div style={{ fontSize: 24, fontWeight: 700, fontFamily: 'Space Grotesk, sans-serif', color }}>{value}</div>
-              </div>
-            ))
-        }
+              ))
+            : statCards.map(({ label, value, color }) => (
+                <div key={label} className="telemetry-card animate-fade-in" style={{ padding: '20px 24px' }}>
+                  <div className="stat-ticker-label" style={{ marginBottom: 4 }}>{label}</div>
+                  <div className="serif-display stat-ticker-number" style={{ color, fontSize: '28px', fontWeight: 700 }}>{value}</div>
+                </div>
+              ))
+          }
+        </div>
       </div>
 
-      {/* Charts */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: 24, marginBottom: 24 }}>
+      {/* Charts Section */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: 24, marginBottom: 24 }}>
+        
         {/* Confidence trend */}
-        <div className="glass-card">
-          <h3 style={{ 
-            fontFamily: 'Space Grotesk, sans-serif', 
-            fontSize: 12, 
-            fontWeight: 700, 
-            textTransform: 'uppercase', 
-            letterSpacing: '0.08em', 
-            marginBottom: 24, 
-            color: '#ffffff',
+        <div className="telemetry-card" style={{ padding: 24 }}>
+          <h3 className="eyebrow" style={{ 
+            marginBottom: 20, 
+            color: 'var(--text-light)',
             display: 'flex',
             alignItems: 'center',
             gap: 8
           }}>
-            <BarChart3 size={13} style={{ color: 'var(--color-text-muted)' }} />
-            confidence_history
+            <BarChart3 size={14} style={{ color: 'var(--text-secondary)' }} />
+            confidence history
           </h3>
           <ResponsiveContainer width="100%" height={200}>
-            <AreaChart data={history}>
+            <AreaChart data={history} margin={{ left: -20, right: 10, top: 10, bottom: 0 }}>
               <defs>
                 <linearGradient id="confGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#ffffff" stopOpacity={0.06} />
-                  <stop offset="95%" stopColor="#ffffff" stopOpacity={0} />
+                  <stop offset="5%" stopColor="var(--accent)" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="var(--accent)" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
-              <XAxis dataKey="time" tick={{ fill: 'var(--color-text-muted)', fontSize: 9, fontFamily: 'JetBrains Mono' }} stroke="rgba(255,255,255,0.05)" />
-              <YAxis domain={[0, 100]} tick={{ fill: 'var(--color-text-muted)', fontSize: 9, fontFamily: 'JetBrains Mono' }} unit="%" stroke="rgba(255,255,255,0.05)" />
+              <XAxis dataKey="time" tick={{ fill: 'var(--text-secondary)', fontSize: 9, fontFamily: 'Inter' }} stroke="rgba(255,255,255,0.05)" />
+              <YAxis domain={[0, 100]} tick={{ fill: 'var(--text-secondary)', fontSize: 9, fontFamily: 'Inter' }} unit="%" stroke="rgba(255,255,255,0.05)" />
               <Tooltip
-                contentStyle={{ background: '#09090a', border: '1px solid var(--color-border)', borderRadius: 2, fontSize: 11, fontFamily: 'JetBrains Mono' }}
-                labelStyle={{ color: 'var(--color-text-muted)' }}
+                contentStyle={{ background: 'var(--bg-surface)', border: '1px solid var(--color-border)', borderRadius: 8, fontSize: 12, color: 'var(--text-light)' }}
+                labelStyle={{ color: 'var(--text-secondary)' }}
               />
-              <Area type="monotone" dataKey="confidence" stroke="#ffffff" fill="url(#confGrad)" strokeWidth={1.5} dot={false} />
+              <Area type="monotone" dataKey="confidence" stroke="var(--accent)" fill="url(#confGrad)" strokeWidth={2} dot={false} name="Confidence" />
             </AreaChart>
           </ResponsiveContainer>
         </div>
 
         {/* Retry & Hallucination */}
-        <div className="glass-card">
-          <h3 style={{ 
-            fontFamily: 'Space Grotesk, sans-serif', 
-            fontSize: 12, 
-            fontWeight: 700, 
-            textTransform: 'uppercase', 
-            letterSpacing: '0.08em', 
-            marginBottom: 24, 
-            color: '#ffffff',
+        <div className="telemetry-card" style={{ padding: 24 }}>
+          <h3 className="eyebrow" style={{ 
+            marginBottom: 20, 
+            color: 'var(--text-light)',
             display: 'flex',
             alignItems: 'center',
             gap: 8
           }}>
-            <TrendingUp size={13} style={{ color: 'var(--color-text-muted)' }} />
-            healing_vs_hallucination
+            <TrendingUp size={14} style={{ color: 'var(--text-secondary)' }} />
+            healing vs hallucination
           </h3>
           <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={history}>
+            <LineChart data={history} margin={{ left: -20, right: 10, top: 10, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
-              <XAxis dataKey="time" tick={{ fill: 'var(--color-text-muted)', fontSize: 9, fontFamily: 'JetBrains Mono' }} stroke="rgba(255,255,255,0.05)" />
-              <YAxis domain={[0, 100]} tick={{ fill: 'var(--color-text-muted)', fontSize: 9, fontFamily: 'JetBrains Mono' }} unit="%" stroke="rgba(255,255,255,0.05)" />
+              <XAxis dataKey="time" tick={{ fill: 'var(--text-secondary)', fontSize: 9, fontFamily: 'Inter' }} stroke="rgba(255,255,255,0.05)" />
+              <YAxis domain={[0, 100]} tick={{ fill: 'var(--text-secondary)', fontSize: 9, fontFamily: 'Inter' }} unit="%" stroke="rgba(255,255,255,0.05)" />
               <Tooltip
-                contentStyle={{ background: '#09090a', border: '1px solid var(--color-border)', borderRadius: 2, fontSize: 11, fontFamily: 'JetBrains Mono' }}
-                labelStyle={{ color: 'var(--color-text-muted)' }}
+                contentStyle={{ background: 'var(--bg-surface)', border: '1px solid var(--color-border)', borderRadius: 8, fontSize: 12, color: 'var(--text-light)' }}
+                labelStyle={{ color: 'var(--text-secondary)' }}
               />
-              <Line type="monotone" dataKey="retry_rate" stroke="var(--color-amber)" strokeWidth={1.5} dot={false} name="Retry" />
-              <Line type="monotone" dataKey="hallucination_rate" stroke="var(--color-rose)" strokeWidth={1.5} dot={false} name="Hallucination" />
+              <Line type="monotone" dataKey="retry_rate" stroke="var(--color-amber)" strokeWidth={2} dot={false} name="Retry" />
+              <Line type="monotone" dataKey="hallucination_rate" stroke="var(--color-rose)" strokeWidth={2} dot={false} name="Hallucination" />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -181,27 +169,19 @@ export default function Analytics() {
 
       {/* Confidence distribution */}
       {histogramData.length > 0 && (
-        <div className="glass-card">
-          <h3 style={{ 
-            fontFamily: 'Space Grotesk, sans-serif', 
-            fontSize: 12, 
-            fontWeight: 700, 
-            textTransform: 'uppercase', 
-            letterSpacing: '0.08em', 
-            marginBottom: 24, 
-            color: '#ffffff'
-          }}>
-            confidence_distribution_intervals
+        <div className="telemetry-card" style={{ padding: 24 }}>
+          <h3 className="eyebrow" style={{ marginBottom: 20, color: 'var(--text-light)' }}>
+            confidence distribution intervals
           </h3>
           <ResponsiveContainer width="100%" height={160}>
-            <BarChart data={histogramData}>
+            <BarChart data={histogramData} margin={{ left: -20, right: 10, top: 10, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
-              <XAxis dataKey="range" tick={{ fill: 'var(--color-text-muted)', fontSize: 9, fontFamily: 'JetBrains Mono' }} stroke="rgba(255,255,255,0.05)" />
-              <YAxis tick={{ fill: 'var(--color-text-muted)', fontSize: 9, fontFamily: 'JetBrains Mono' }} stroke="rgba(255,255,255,0.05)" />
+              <XAxis dataKey="range" tick={{ fill: 'var(--text-secondary)', fontSize: 9, fontFamily: 'Inter' }} stroke="rgba(255,255,255,0.05)" />
+              <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 9, fontFamily: 'Inter' }} stroke="rgba(255,255,255,0.05)" />
               <Tooltip
-                contentStyle={{ background: '#09090a', border: '1px solid var(--color-border)', borderRadius: 2, fontSize: 11, fontFamily: 'JetBrains Mono' }}
+                contentStyle={{ background: 'var(--bg-surface)', border: '1px solid var(--color-border)', borderRadius: 8, fontSize: 12, color: 'var(--text-light)' }}
               />
-              <Bar dataKey="count" fill="rgba(255,255,255,0.8)" radius={[0, 0, 0, 0]} />
+              <Bar dataKey="count" fill="var(--accent)" radius={[4, 4, 0, 0]} name="Queries" />
             </BarChart>
           </ResponsiveContainer>
         </div>

@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect, useId } from 'react';
-import { Send, Trash2, Bot, User, Loader, CheckCircle, XCircle } from 'lucide-react';
+import { Send, Trash2, Bot, Loader, CheckCircle, XCircle, User, Sparkles } from 'lucide-react';
 import { sendChat } from '../services/api';
 import { useAppStore } from '../store/appStore';
 import ConfidenceBadge from '../components/Chat/ConfidenceBadge';
 import SourcesPanel from '../components/Chat/SourcesPanel';
+import SubpageHeader from '../components/Layout/SubpageHeader';
 
 export default function Chat() {
   const [query, setQuery] = useState('');
@@ -61,52 +62,57 @@ export default function Chat() {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-      {/* Chat pane — 60% */}
-      <div style={{
-        flex: '0 0 60%',
-        display: 'flex',
-        flexDirection: 'column',
-        borderRight: '1px solid var(--color-border-subtle)',
-        background: 'var(--color-bg-primary)',
-      }}>
-        {/* Header */}
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', width: '100%' }}>
+      {/* Top Navigation */}
+      <div style={{ padding: '16px 32px 0 32px', background: 'var(--bg-secondary)' }}>
+        <SubpageHeader title="Query Engine" />
+      </div>
+
+      {/* Main workspace split */}
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden', width: '100%' }}>
+        {/* Chat pane — 60% */}
         <div style={{
-          padding: '24px 32px',
-          borderBottom: '1px solid var(--color-border-subtle)',
+          flex: '0 0 60%',
           display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          background: 'var(--color-bg-secondary)',
+          flexDirection: 'column',
+          borderRight: '1px solid var(--color-border)',
+          background: 'var(--bg-secondary)',
         }}>
-          <div>
-            <div className="step-num">.02 / ENGINE</div>
-            <h1 style={{ 
-              fontFamily: 'Space Grotesk, sans-serif', 
-              fontSize: 18, 
-              fontWeight: 700, 
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em'
-            }}>
-              RAG Session
-            </h1>
-            <p style={{ fontSize: 11, color: 'var(--color-text-muted)', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>
-              SELF-HEALING · CITED GROUND TRUTH
+          {/* Header */}
+          <div style={{
+            padding: '16px 32px',
+            borderBottom: '1px solid var(--color-border)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            background: 'var(--bg-secondary)',
+          }}>
+            <div>
+              <h1 style={{ 
+                fontSize: '20px', 
+                fontWeight: 700,
+                color: 'var(--text-light)', 
+                lineHeight: 1.2
+              }}>
+                Query Session
+              </h1>
+            <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>
+              Self-healing retrieval and context-guided execution.
             </p>
           </div>
           {messages.length > 0 && (
-            <button onClick={clearChat} className="btn-ghost" style={{ padding: '6px 12px', fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <Trash2 size={11} /> Clear
+            <button onClick={clearChat} className="btn-ghost" style={{ padding: '8px 14px', fontSize: 12 }}>
+              <Trash2 size={12} /> Clear Chat
             </button>
           )}
         </div>
 
-        {/* Messages */}
+        {/* Messages list */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '32px' }}>
           {messages.length === 0 ? (
             <EmptyState />
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               {messages.map((msg) => (
                 <ChatMessage key={msg.id} message={msg} />
               ))}
@@ -116,19 +122,19 @@ export default function Chat() {
           )}
         </div>
 
-        {/* Input */}
+        {/* Input form */}
         <div style={{
-          padding: '24px 32px',
-          borderTop: '1px solid var(--color-border-subtle)',
-          background: 'var(--color-bg-secondary)',
+          padding: '20px 32px',
+          borderTop: '1px solid var(--color-border)',
+          background: 'var(--bg-secondary)',
         }}>
-          <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 12 }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
             <input
               id={inputId}
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Query the index..."
+              placeholder="Ask a question about indexed sources..."
               className="input-field"
               disabled={isLoading}
               style={{ flex: 1 }}
@@ -137,45 +143,49 @@ export default function Chat() {
               type="submit"
               className="btn-primary"
               disabled={isLoading || !query.trim()}
-              style={{ padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ height: '44px', width: '90px' }}
             >
-              {isLoading ? <Loader size={14} style={{ animation: 'spin-slow 2s linear infinite' }} /> : <Send size={14} />}
+              {isLoading ? <Loader size={16} style={{ animation: 'loading 1.5s infinite' }} /> : 'Send'}
             </button>
           </form>
         </div>
       </div>
 
       {/* Sources pane — 40% */}
-      <div style={{ flex: '0 0 40%', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: 'var(--color-bg-secondary)' }}>
-        {/* Confidence header */}
+      <div style={{ 
+        flex: '0 0 40%', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        overflow: 'hidden', 
+        background: 'var(--bg-primary)',
+        borderLeft: '1px solid var(--color-border)'
+      }}>
+        {/* Telemetry header */}
         <div style={{
           padding: '24px',
-          borderBottom: '1px solid var(--color-border-subtle)',
-          background: 'var(--color-bg-secondary)',
+          borderBottom: '1px solid var(--color-border)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
         }}>
           <div>
             <h2 style={{ 
-              fontFamily: 'Space Grotesk, sans-serif', 
-              fontSize: 13, 
-              fontWeight: 700, 
-              textTransform: 'uppercase', 
-              letterSpacing: '0.05em' 
+              fontSize: '18px', 
+              fontWeight: 700,
+              color: 'var(--text-light)'
             }}>
-              Telemetry
+              Diagnostics
             </h2>
-            <p style={{ fontSize: 11, color: 'var(--color-text-muted)', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>
+            <p className="eyebrow" style={{ fontSize: 10, color: 'var(--text-secondary)', marginTop: 2 }}>
               relevance metrics
             </p>
           </div>
           {currentConfidence !== null && (
-            <ConfidenceBadge confidence={currentConfidence} size={60} />
+            <ConfidenceBadge confidence={currentConfidence} size={52} />
           )}
         </div>
 
-        {/* Sources */}
+        {/* Sources scroll panel */}
         <div style={{ flex: 1, overflowY: 'auto' }}>
           <SourcesPanel sources={currentSources} healing={currentHealing} />
         </div>
@@ -189,50 +199,94 @@ function ChatMessage({ message }) {
   return (
     <div
       className="animate-fade-in"
-      style={{ display: 'flex', flexDirection: 'column', alignItems: isUser ? 'flex-end' : 'flex-start' }}
+      style={{ 
+        display: 'flex', 
+        gap: 16,
+        width: '100%',
+        alignItems: 'flex-start',
+        flexDirection: isUser ? 'row-reverse' : 'row'
+      }}
     >
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, flexDirection: isUser ? 'row-reverse' : 'row', width: '100%' }}>
-        {/* Monogram Avatar */}
-        <div style={{
-          width: 28, height: 28, borderRadius: 2, flexShrink: 0,
-          background: isUser ? '#ffffff' : 'rgba(255,255,255,0.05)',
-          border: '1px solid var(--color-border)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 10, fontWeight: 700, color: isUser ? '#000000' : 'var(--color-text-secondary)',
-          fontFamily: 'Space Grotesk, sans-serif'
-        }}>
-          {isUser ? 'U' : 'AI'}
+      {/* Avatar Icon */}
+      <div style={{
+        width: 32,
+        height: 32,
+        borderRadius: '50%',
+        background: isUser ? 'var(--accent-light)' : 'rgba(255, 255, 255, 0.03)',
+        border: isUser ? '1px solid rgba(99, 102, 241, 0.2)' : '1px solid var(--color-border)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: isUser ? 'var(--accent)' : 'var(--text-light)',
+        flexShrink: 0,
+      }}>
+        {isUser ? <User size={14} /> : <Sparkles size={14} />}
+      </div>
+
+      {/* Message Bubble */}
+      <div style={{ flex: 1, maxWidth: '75%', textAlign: isUser ? 'right' : 'left' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, justifyContent: isUser ? 'flex-end' : 'flex-start' }}>
+          <span className="eyebrow" style={{ fontSize: 9, color: 'var(--text-secondary)' }}>
+            {isUser ? 'user query' : 'healing agent response'}
+          </span>
         </div>
 
-        {/* Bubble */}
         <div className={isUser ? 'message-user' : 'message-assistant'}>
-          <p style={{ fontSize: 13, lineHeight: 1.7, whiteSpace: 'pre-wrap', wordBreak: 'break-word', color: 'var(--color-text-primary)' }}>
+          <p style={{ 
+            fontSize: 14, 
+            lineHeight: 1.6, 
+            whiteSpace: 'pre-wrap', 
+            wordBreak: 'break-word', 
+            color: 'var(--text-light)',
+            fontWeight: 400,
+            textAlign: 'left'
+          }}>
             {message.content}
           </p>
-
-          {/* Metadata for assistant messages */}
-          {!isUser && !message.isError && message.confidence !== undefined && (
-            <div style={{
-              marginTop: 14,
-              paddingTop: 12,
-              borderTop: '1px solid var(--color-border-subtle)',
-              display: 'flex',
-              gap: 8,
-              flexWrap: 'wrap',
-            }}>
-              <span className={`badge ${message.confidence >= 0.70 ? 'badge-emerald' : 'badge-rose'}`}>
-                {message.is_grounded ? <CheckCircle size={10} /> : <XCircle size={10} />}
-                {message.is_grounded ? 'Grounded' : 'Ungrounded'}
-              </span>
-              <span className="badge badge-violet">
-                {Math.round(message.confidence * 100)}% conf
-              </span>
-              <span style={{ fontSize: 10, color: 'var(--color-text-muted)', alignSelf: 'center', fontFamily: 'JetBrains Mono, monospace' }}>
-                {message.processing_time_ms?.toFixed(0)}ms latency
-              </span>
-            </div>
-          )}
         </div>
+
+        {/* Telemetry data for assistant */}
+        {!isUser && !message.isError && message.confidence !== undefined && (
+          <div style={{
+            marginTop: 8,
+            display: 'inline-flex',
+            gap: 12,
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            background: 'var(--bg-surface)',
+            padding: '6px 12px',
+            border: '1px solid var(--color-border)',
+            borderRadius: 6
+          }}>
+            <span style={{ 
+              fontSize: 10, 
+              fontFamily: 'Inter', 
+              fontWeight: 600, 
+              color: message.confidence >= 0.70 ? 'var(--color-emerald)' : 'var(--color-rose)', 
+              textTransform: 'uppercase', 
+              letterSpacing: '0.05em',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4
+            }}>
+              {message.is_grounded ? (
+                <>
+                  <CheckCircle size={10} style={{ color: 'var(--color-emerald)' }} /> grounded
+                </>
+              ) : (
+                <>
+                  <XCircle size={10} style={{ color: 'var(--color-rose)' }} /> ungrounded
+                </>
+              )}
+            </span>
+            <span style={{ fontSize: 10, color: 'var(--text-secondary)', fontFamily: 'Inter' }}>
+              &middot; {Math.round(message.confidence * 100)}% confidence
+            </span>
+            <span style={{ fontSize: 10, color: 'var(--text-secondary)', fontFamily: 'Inter' }}>
+              &middot; {message.processing_time_ms?.toFixed(0)}ms latency
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -240,28 +294,28 @@ function ChatMessage({ message }) {
 
 function TypingIndicator() {
   return (
-    <div className="animate-fade-in" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <div className="animate-fade-in" style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
       <div style={{
-        width: 28, height: 28, borderRadius: 2,
-        background: 'rgba(255,255,255,0.05)',
+        width: 32,
+        height: 32,
+        borderRadius: '50%',
+        background: 'rgba(255, 255, 255, 0.03)',
         border: '1px solid var(--color-border)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: 10, fontWeight: 700, color: 'var(--color-text-secondary)',
-        fontFamily: 'Space Grotesk, sans-serif'
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'var(--text-light)',
       }}>
-        AI
+        <Sparkles size={14} />
       </div>
-      <div className="message-assistant" style={{ padding: '12px 16px' }}>
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-          {[0, 1, 2].map((i) => (
-            <div key={i} style={{
-              width: 4, height: 4, borderRadius: '50%',
-              background: 'var(--color-text-secondary)',
-              animation: `spin-slow 1.4s ease-in-out ${i * 0.2}s infinite`,
-            }} />
-          ))}
-          <span style={{ fontSize: 11, fontFamily: 'JetBrains Mono, monospace', color: 'var(--color-text-muted)', marginLeft: 6 }}>
-            HEALING RETRIEVAL & GENERATING...
+      <div style={{ flex: 1 }}>
+        <div className="eyebrow" style={{ fontSize: 9, color: 'var(--text-secondary)', marginBottom: 4 }}>
+          healing agent
+        </div>
+        <div className="message-assistant" style={{ display: 'flex', gap: 8, alignItems: 'center', padding: '12px 18px' }}>
+          <div className="skeleton" style={{ width: 16, height: 16, borderRadius: '50%' }} />
+          <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+            Expanding query contexts and generating verified answer...
           </span>
         </div>
       </div>
@@ -271,33 +325,25 @@ function TypingIndicator() {
 
 function EmptyState() {
   const examples = [
-    'Explain the RAG retrieval pipeline',
-    'What is the self-attention mechanism?',
-    'How does hallucination detection work?',
+    'Explain the self-attention mechanism',
+    'What is the retrieval pipeline configuration?',
+    'How does hallucination scoring run?',
   ];
   return (
     <div style={{
       height: '100%', display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center', gap: 32,
+      alignItems: 'center', justifyContent: 'center', gap: 24,
+      maxWidth: 500, margin: '40px auto 0'
     }}>
       <div style={{ textAlign: 'center' }}>
-        <div style={{
-          width: 48, height: 48, borderRadius: 2,
-          background: 'rgba(255,255,255,0.02)',
-          border: '1px solid var(--color-border)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          margin: '0 auto 16px',
-        }}>
-          <Bot size={20} color="var(--color-text-secondary)" />
-        </div>
-        <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 16, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>
-          Query Console
+        <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text-light)', marginBottom: 8 }}>
+          Consult the index
         </h2>
-        <p style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
-          Enter a prompt below to run the Self-Healing RAG loop.
+        <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+          Submit a query to execute the multi-step retrieval state machine. The engine will automatically expand query scopes and retry if results are insufficient.
         </p>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%', maxWidth: 360 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%' }}>
         {examples.map((ex) => (
           <button
             key={ex}
@@ -305,23 +351,22 @@ function EmptyState() {
               const inp = document.querySelector('input[type="text"]');
               if (inp) {
                 inp.value = ex;
-                // Dispatch event to update React state
                 const ev = new Event('input', { bubbles: true });
                 inp.dispatchEvent(ev);
                 inp.focus();
               }
             }}
+            className="btn-ghost"
             style={{
-              background: '#141416', border: '1px solid var(--color-border)',
-              borderRadius: 2, padding: '12px 16px', color: 'var(--color-text-secondary)',
-              fontSize: 12, cursor: 'pointer', textAlign: 'left',
-              transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-              fontFamily: 'Outfit, sans-serif'
+              padding: '14px 20px',
+              borderRadius: '10px',
+              justifyContent: 'space-between',
+              width: '100%',
+              fontSize: '13px'
             }}
-            onMouseEnter={(e) => e.currentTarget.style.borderColor = '#ffffff'}
-            onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--color-border)'}
           >
-            "{ex}"
+            <span>"{ex}"</span>
+            <span style={{ fontSize: 14, color: 'var(--accent)' }}>&rarr;</span>
           </button>
         ))}
       </div>

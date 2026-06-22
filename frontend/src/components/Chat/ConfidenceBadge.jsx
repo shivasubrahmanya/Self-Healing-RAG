@@ -1,22 +1,20 @@
 /**
  * ConfidenceBadge — minimalist SVG ring showing confidence percentage.
- * Color transitions: emerald (≥85%) → amber (≥70%) → rose (<70%)
+ * Color transitions: emerald (accent) → amber (accent) → rose (warning)
  */
-export default function ConfidenceBadge({ confidence, size = 60 }) {
+export default function ConfidenceBadge({ confidence, size = 56 }) {
   const pct = Math.round(confidence * 100);
-  const r = (size / 2) - 4;
+  const r = (size / 2) - 3;
   const circumference = 2 * Math.PI * r;
   const offset = circumference - (pct / 100) * circumference;
 
   const color =
-    pct >= 85 ? 'var(--color-emerald)' :
-    pct >= 70 ? 'var(--color-amber)' :
-    'var(--color-rose)';
+    pct >= 70 ? 'var(--accent)' : 'var(--color-rose)';
 
   const label =
-    pct >= 85 ? 'High' :
-    pct >= 70 ? 'Moderate' :
-    'Low';
+    pct >= 85 ? 'high' :
+    pct >= 70 ? 'moderate' :
+    'low';
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -28,8 +26,8 @@ export default function ConfidenceBadge({ confidence, size = 60 }) {
             cy={size / 2}
             r={r}
             fill="none"
-            stroke="rgba(255,255,255,0.03)"
-            strokeWidth={2}
+            stroke="rgba(255,255,255,0.04)"
+            strokeWidth={1.5}
           />
           {/* Fill */}
           <circle
@@ -38,8 +36,7 @@ export default function ConfidenceBadge({ confidence, size = 60 }) {
             r={r}
             fill="none"
             stroke={color}
-            strokeWidth={2.5}
-            strokeLinecap="square"
+            strokeWidth={1.5}
             strokeDasharray={circumference}
             strokeDashoffset={offset}
             transform={`rotate(-90 ${size / 2} ${size / 2})`}
@@ -57,10 +54,10 @@ export default function ConfidenceBadge({ confidence, size = 60 }) {
           justifyContent: 'center',
         }}>
           <span style={{ 
-            fontFamily: 'JetBrains Mono, monospace', 
-            fontSize: 12, 
-            fontWeight: 700, 
-            color: '#ffffff', 
+            fontFamily: 'Inter, sans-serif', 
+            fontSize: 11, 
+            fontWeight: 500, 
+            color: 'var(--text-dark)', 
             lineHeight: 1 
           }}>
             {pct}%
@@ -70,22 +67,22 @@ export default function ConfidenceBadge({ confidence, size = 60 }) {
       <div style={{ textAlign: 'left' }}>
         <div style={{ 
           fontSize: 9, 
-          fontFamily: 'JetBrains Mono, monospace', 
-          color: 'var(--color-text-muted)', 
+          fontFamily: 'Inter, sans-serif', 
+          color: 'var(--text-muted)', 
           textTransform: 'uppercase', 
-          letterSpacing: '0.05em' 
+          letterSpacing: '0.1em' 
         }}>
-          Confidence
+          confidence
         </div>
         <div style={{ 
           fontSize: 11, 
-          fontWeight: 600, 
-          color: color, 
-          textTransform: 'uppercase', 
+          fontWeight: 450, 
+          color: 'var(--text-dark)', 
+          textTransform: 'lowercase', 
           letterSpacing: '0.02em',
           marginTop: 1
         }}>
-          {label}
+          {label} score
         </div>
       </div>
     </div>

@@ -1,47 +1,42 @@
 import { NavLink } from 'react-router-dom';
-import {
-  MessageSquare,
-  LayoutDashboard,
-  BarChart3,
-  Settings,
-  Activity,
-} from 'lucide-react';
+import { LayoutDashboard, MessageSquare, BarChart3, Sliders, Database } from 'lucide-react';
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/chat', label: 'Chat Engine', icon: MessageSquare },
   { to: '/analytics', label: 'Analytics', icon: BarChart3 },
-  { to: '/admin', label: 'System Admin', icon: Settings },
+  { to: '/admin', label: 'System Admin', icon: Sliders },
 ];
 
 export default function Sidebar() {
   return (
     <nav className="sidebar">
-      {/* Monogram Logo */}
+      {/* SaaS Premium Branding */}
       <div className="sidebar-logo">
         <div className="sidebar-logo-icon">
-          SH
+          <Database size={18} />
         </div>
         <div>
           <div style={{ 
-            fontFamily: 'Space Grotesk, sans-serif',
-            fontSize: 12, 
+            fontFamily: 'Inter, sans-serif',
+            fontSize: 15, 
             fontWeight: 700, 
-            color: '#ffffff', 
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-            lineHeight: 1.2 
+            color: 'var(--text-light)', 
+            letterSpacing: '-0.02em',
+            lineHeight: 1.1 
           }}>
-            Self-Heal RAG
+            HealRAG
           </div>
           <div style={{ 
-            fontSize: 10, 
-            color: 'var(--color-text-muted)', 
-            fontFamily: 'JetBrains Mono, monospace', 
-            fontWeight: 500,
-            marginTop: 2
+            fontSize: 11, 
+            color: 'var(--text-secondary)', 
+            fontFamily: 'Inter, sans-serif', 
+            fontWeight: 450,
+            marginTop: 2,
+            textTransform: 'none',
+            letterSpacing: 'normal'
           }}>
-            SYS v1.0.0
+            Self-Healing Engine
           </div>
         </div>
       </div>
@@ -53,31 +48,46 @@ export default function Sidebar() {
             key={to}
             to={to}
             end={end}
-            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            className={({ isActive }) => `nav-item-new ${isActive ? 'active' : ''}`}
           >
-            <Icon size={14} style={{ opacity: 0.8 }} />
-            {label}
+            <Icon className="nav-icon" size={18} />
+            <span>{label}</span>
           </NavLink>
         ))}
       </div>
 
       {/* System Status bottom panel */}
       <div style={{
-        padding: '16px 24px',
-        borderTop: '1px solid var(--color-border-subtle)',
+        padding: '16px 20px',
+        borderTop: '1px solid var(--color-border)',
         display: 'flex',
         alignItems: 'center',
-        gap: 10,
+        justifyContent: 'space-between',
+        gap: 8,
       }}>
-        <Activity size={12} style={{ color: 'var(--color-emerald)' }} />
-        <span style={{ 
-          fontSize: 10, 
-          fontFamily: 'JetBrains Mono, monospace',
-          color: 'var(--color-text-muted)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.05em'
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div className="healing-pulse" style={{
+            width: 8,
+            height: 8,
+            borderRadius: '50%',
+            background: 'var(--color-emerald)',
+          }} />
+          <span style={{ 
+            fontSize: 12, 
+            fontFamily: 'Inter, sans-serif',
+            color: 'var(--text-secondary)',
+            fontWeight: 500,
+            textTransform: 'none',
+          }}>
+            System Active
+          </span>
+        </div>
+        <span style={{
+          fontSize: 10,
+          color: 'var(--text-muted)',
+          fontFamily: 'monospace'
         }}>
-          System Online
+          v1.0.0
         </span>
       </div>
     </nav>
