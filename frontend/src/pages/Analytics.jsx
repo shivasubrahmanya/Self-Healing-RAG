@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { BarChart3, TrendingUp, RefreshCw } from 'lucide-react';
 import {
   LineChart, Line, AreaChart, Area, XAxis, YAxis,
-  CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
+  CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar,
 } from 'recharts';
 import { getMetrics } from '../services/api';
@@ -17,7 +17,6 @@ export default function Analytics() {
     try {
       const data = await getMetrics();
       setMetrics(data);
-      // Append to history for trend chart
       setHistory((prev) => [
         ...prev.slice(-19),
         {
@@ -38,14 +37,14 @@ export default function Analytics() {
   }, []);
 
   const statCards = metrics ? [
-    { label: 'Total Queries', value: metrics.total_queries, color: 'var(--color-violet-light)' },
+    { label: 'Total Queries', value: metrics.total_queries, color: '#ffffff' },
     { label: 'Avg Confidence', value: `${Math.round(metrics.average_confidence * 100)}%`, color: 'var(--color-emerald)' },
     { label: 'Retry Rate', value: `${Math.round(metrics.retry_rate * 100)}%`, color: 'var(--color-amber)' },
     { label: 'Hallucination Rate', value: `${Math.round(metrics.hallucination_rate * 100)}%`, color: 'var(--color-rose)' },
-    { label: 'Docs Indexed', value: metrics.total_uploads, color: 'var(--color-violet-light)' },
+    { label: 'Documents', value: metrics.total_uploads, color: '#ffffff' },
     { label: 'Chunks Indexed', value: metrics.total_chunks_indexed, color: 'var(--color-emerald)' },
-    { label: 'Avg Response', value: `${metrics.average_response_time_ms?.toFixed(0)}ms`, color: 'var(--color-amber)' },
-    { label: 'Healings', value: metrics.healing_triggered_count, color: 'var(--color-rose)' },
+    { label: 'Avg Latency', value: `${metrics.average_response_time_ms?.toFixed(0)}ms`, color: 'var(--color-amber)' },
+    { label: 'Healing Loops', value: metrics.healing_triggered_count, color: 'var(--color-rose)' },
   ] : [];
 
   const histogramData = metrics?.confidence_histogram
@@ -56,108 +55,153 @@ export default function Analytics() {
     : [];
 
   return (
-    <div style={{ padding: '32px', maxWidth: 1100, margin: '0 auto' }}>
+    <div style={{ padding: '48px 32px', maxWidth: 1100, margin: '0 auto' }}>
       {/* Header */}
-      <div style={{ marginBottom: 28, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ marginBottom: 48, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
         <div>
-          <h1 style={{ fontSize: 28, fontWeight: 800, background: 'linear-gradient(135deg, #f1f5f9, var(--color-violet-light))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          <div className="step-num">.03 / METRICS</div>
+          <h1 style={{ 
+            fontFamily: 'Space Grotesk, sans-serif', 
+            fontSize: 36, 
+            fontWeight: 700, 
+            textTransform: 'uppercase', 
+            letterSpacing: '0.03em',
+            color: '#ffffff' 
+          }}>
             Analytics
           </h1>
-          <p style={{ fontSize: 14, color: 'var(--color-text-muted)' }}>
-            Real-time RAG pipeline performance metrics
+          <p style={{ fontSize: 13, color: 'var(--color-text-secondary)', marginTop: 4 }}>
+            Real-time pipeline performance analytics and reliability rates.
           </p>
         </div>
-        <button onClick={loadMetrics} className="btn-ghost" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13 }}>
-          <RefreshCw size={13} style={{ animation: metricsLoading ? 'spin-slow 1s linear infinite' : 'none' }} />
-          Refresh
+        <button onClick={loadMetrics} className="btn-ghost" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, padding: '8px 16px' }}>
+          <RefreshCw size={11} style={{ animation: metricsLoading ? 'spin-slow 2s linear infinite' : 'none' }} />
+          sync_metrics
         </button>
       </div>
 
       {/* Stat cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, marginBottom: 28 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginBottom: 32 }}>
         {metricsLoading && !metrics
           ? Array(8).fill(0).map((_, i) => (
               <div key={i} className="stat-card">
-                <div className="skeleton" style={{ height: 12, width: 80, marginBottom: 12 }} />
-                <div className="skeleton" style={{ height: 28, width: 60 }} />
+                <div className="skeleton" style={{ height: 10, width: 80, marginBottom: 16 }} />
+                <div className="skeleton" style={{ height: 24, width: 50 }} />
               </div>
             ))
           : statCards.map(({ label, value, color }) => (
               <div key={label} className="stat-card animate-fade-in">
-                <div style={{ fontSize: 11, color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 8 }}>
+                <div style={{ 
+                  fontSize: 10, 
+                  color: 'var(--color-text-muted)', 
+                  fontWeight: 700, 
+                  textTransform: 'uppercase', 
+                  letterSpacing: '0.1em', 
+                  marginBottom: 12 
+                }}>
                   {label}
                 </div>
-                <div style={{ fontSize: 26, fontWeight: 800, color }}>{value}</div>
+                <div style={{ fontSize: 24, fontWeight: 700, fontFamily: 'Space Grotesk, sans-serif', color }}>{value}</div>
               </div>
             ))
         }
       </div>
 
       {/* Charts */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: 24, marginBottom: 24 }}>
         {/* Confidence trend */}
-        <div className="glass-card" style={{ padding: '20px' }}>
-          <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, color: 'var(--color-text-secondary)' }}>
-            <BarChart3 size={14} style={{ display: 'inline', marginRight: 6 }} />
-            Confidence Trend
+        <div className="glass-card">
+          <h3 style={{ 
+            fontFamily: 'Space Grotesk, sans-serif', 
+            fontSize: 12, 
+            fontWeight: 700, 
+            textTransform: 'uppercase', 
+            letterSpacing: '0.08em', 
+            marginBottom: 24, 
+            color: '#ffffff',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8
+          }}>
+            <BarChart3 size={13} style={{ color: 'var(--color-text-muted)' }} />
+            confidence_history
           </h3>
           <ResponsiveContainer width="100%" height={200}>
             <AreaChart data={history}>
               <defs>
                 <linearGradient id="confGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#7c3aed" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#7c3aed" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#ffffff" stopOpacity={0.06} />
+                  <stop offset="95%" stopColor="#ffffff" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="time" tick={{ fill: '#475569', fontSize: 10 }} />
-              <YAxis domain={[0, 100]} tick={{ fill: '#475569', fontSize: 10 }} unit="%" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
+              <XAxis dataKey="time" tick={{ fill: 'var(--color-text-muted)', fontSize: 9, fontFamily: 'JetBrains Mono' }} stroke="rgba(255,255,255,0.05)" />
+              <YAxis domain={[0, 100]} tick={{ fill: 'var(--color-text-muted)', fontSize: 9, fontFamily: 'JetBrains Mono' }} unit="%" stroke="rgba(255,255,255,0.05)" />
               <Tooltip
-                contentStyle={{ background: '#0d1117', border: '1px solid rgba(124,58,237,0.2)', borderRadius: 8, fontSize: 12 }}
-                labelStyle={{ color: '#94a3b8' }}
+                contentStyle={{ background: '#09090a', border: '1px solid var(--color-border)', borderRadius: 2, fontSize: 11, fontFamily: 'JetBrains Mono' }}
+                labelStyle={{ color: 'var(--color-text-muted)' }}
               />
-              <Area type="monotone" dataKey="confidence" stroke="#7c3aed" fill="url(#confGrad)" strokeWidth={2} dot={false} />
+              <Area type="monotone" dataKey="confidence" stroke="#ffffff" fill="url(#confGrad)" strokeWidth={1.5} dot={false} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
 
         {/* Retry & Hallucination */}
-        <div className="glass-card" style={{ padding: '20px' }}>
-          <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, color: 'var(--color-text-secondary)' }}>
-            <TrendingUp size={14} style={{ display: 'inline', marginRight: 6 }} />
-            Healing & Hallucination Rates
+        <div className="glass-card">
+          <h3 style={{ 
+            fontFamily: 'Space Grotesk, sans-serif', 
+            fontSize: 12, 
+            fontWeight: 700, 
+            textTransform: 'uppercase', 
+            letterSpacing: '0.08em', 
+            marginBottom: 24, 
+            color: '#ffffff',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8
+          }}>
+            <TrendingUp size={13} style={{ color: 'var(--color-text-muted)' }} />
+            healing_vs_hallucination
           </h3>
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={history}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="time" tick={{ fill: '#475569', fontSize: 10 }} />
-              <YAxis domain={[0, 100]} tick={{ fill: '#475569', fontSize: 10 }} unit="%" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
+              <XAxis dataKey="time" tick={{ fill: 'var(--color-text-muted)', fontSize: 9, fontFamily: 'JetBrains Mono' }} stroke="rgba(255,255,255,0.05)" />
+              <YAxis domain={[0, 100]} tick={{ fill: 'var(--color-text-muted)', fontSize: 9, fontFamily: 'JetBrains Mono' }} unit="%" stroke="rgba(255,255,255,0.05)" />
               <Tooltip
-                contentStyle={{ background: '#0d1117', border: '1px solid rgba(124,58,237,0.2)', borderRadius: 8, fontSize: 12 }}
-                labelStyle={{ color: '#94a3b8' }}
+                contentStyle={{ background: '#09090a', border: '1px solid var(--color-border)', borderRadius: 2, fontSize: 11, fontFamily: 'JetBrains Mono' }}
+                labelStyle={{ color: 'var(--color-text-muted)' }}
               />
-              <Line type="monotone" dataKey="retry_rate" stroke="#f59e0b" strokeWidth={2} dot={false} name="Retry" />
-              <Line type="monotone" dataKey="hallucination_rate" stroke="#f43f5e" strokeWidth={2} dot={false} name="Hallucination" />
+              <Line type="monotone" dataKey="retry_rate" stroke="var(--color-amber)" strokeWidth={1.5} dot={false} name="Retry" />
+              <Line type="monotone" dataKey="hallucination_rate" stroke="var(--color-rose)" strokeWidth={1.5} dot={false} name="Hallucination" />
             </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
 
-      {/* Confidence histogram */}
+      {/* Confidence distribution */}
       {histogramData.length > 0 && (
-        <div className="glass-card" style={{ padding: '20px' }}>
-          <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, color: 'var(--color-text-secondary)' }}>
-            Confidence Distribution
+        <div className="glass-card">
+          <h3 style={{ 
+            fontFamily: 'Space Grotesk, sans-serif', 
+            fontSize: 12, 
+            fontWeight: 700, 
+            textTransform: 'uppercase', 
+            letterSpacing: '0.08em', 
+            marginBottom: 24, 
+            color: '#ffffff'
+          }}>
+            confidence_distribution_intervals
           </h3>
           <ResponsiveContainer width="100%" height={160}>
             <BarChart data={histogramData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="range" tick={{ fill: '#475569', fontSize: 10 }} />
-              <YAxis tick={{ fill: '#475569', fontSize: 10 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
+              <XAxis dataKey="range" tick={{ fill: 'var(--color-text-muted)', fontSize: 9, fontFamily: 'JetBrains Mono' }} stroke="rgba(255,255,255,0.05)" />
+              <YAxis tick={{ fill: 'var(--color-text-muted)', fontSize: 9, fontFamily: 'JetBrains Mono' }} stroke="rgba(255,255,255,0.05)" />
               <Tooltip
-                contentStyle={{ background: '#0d1117', border: '1px solid rgba(124,58,237,0.2)', borderRadius: 8, fontSize: 12 }}
+                contentStyle={{ background: '#09090a', border: '1px solid var(--color-border)', borderRadius: 2, fontSize: 11, fontFamily: 'JetBrains Mono' }}
               />
-              <Bar dataKey="count" fill="var(--color-violet)" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="count" fill="rgba(255,255,255,0.8)" radius={[0, 0, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

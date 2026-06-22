@@ -1,10 +1,10 @@
 /**
- * ConfidenceBadge — animated SVG ring showing confidence percentage.
+ * ConfidenceBadge — minimalist SVG ring showing confidence percentage.
  * Color transitions: emerald (≥85%) → amber (≥70%) → rose (<70%)
  */
-export default function ConfidenceBadge({ confidence, size = 80 }) {
+export default function ConfidenceBadge({ confidence, size = 60 }) {
   const pct = Math.round(confidence * 100);
-  const r = (size / 2) - 8;
+  const r = (size / 2) - 4;
   const circumference = 2 * Math.PI * r;
   const offset = circumference - (pct / 100) * circumference;
 
@@ -13,18 +13,13 @@ export default function ConfidenceBadge({ confidence, size = 80 }) {
     pct >= 70 ? 'var(--color-amber)' :
     'var(--color-rose)';
 
-  const glowColor =
-    pct >= 85 ? 'var(--color-emerald-glow)' :
-    pct >= 70 ? 'var(--color-amber-glow)' :
-    'var(--color-rose-glow)';
-
   const label =
     pct >= 85 ? 'High' :
     pct >= 70 ? 'Moderate' :
     'Low';
 
   return (
-    <div style={{ textAlign: 'center' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
       <div className="confidence-ring" style={{ width: size, height: size }}>
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
           {/* Track */}
@@ -33,8 +28,8 @@ export default function ConfidenceBadge({ confidence, size = 80 }) {
             cy={size / 2}
             r={r}
             fill="none"
-            stroke="rgba(255,255,255,0.06)"
-            strokeWidth={6}
+            stroke="rgba(255,255,255,0.03)"
+            strokeWidth={2}
           />
           {/* Fill */}
           <circle
@@ -43,14 +38,13 @@ export default function ConfidenceBadge({ confidence, size = 80 }) {
             r={r}
             fill="none"
             stroke={color}
-            strokeWidth={6}
-            strokeLinecap="round"
+            strokeWidth={2.5}
+            strokeLinecap="square"
             strokeDasharray={circumference}
             strokeDashoffset={offset}
             transform={`rotate(-90 ${size / 2} ${size / 2})`}
             style={{
-              transition: 'stroke-dashoffset 0.6s ease, stroke 0.3s ease',
-              filter: `drop-shadow(0 0 6px ${glowColor})`,
+              transition: 'stroke-dashoffset 0.6s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.3s ease',
             }}
           />
         </svg>
@@ -62,13 +56,37 @@ export default function ConfidenceBadge({ confidence, size = 80 }) {
           alignItems: 'center',
           justifyContent: 'center',
         }}>
-          <span style={{ fontSize: size * 0.2, fontWeight: 700, color, lineHeight: 1 }}>
+          <span style={{ 
+            fontFamily: 'JetBrains Mono, monospace', 
+            fontSize: 12, 
+            fontWeight: 700, 
+            color: '#ffffff', 
+            lineHeight: 1 
+          }}>
             {pct}%
           </span>
         </div>
       </div>
-      <div style={{ fontSize: 11, color: 'var(--color-text-muted)', marginTop: 4, fontWeight: 600 }}>
-        {label} Confidence
+      <div style={{ textAlign: 'left' }}>
+        <div style={{ 
+          fontSize: 9, 
+          fontFamily: 'JetBrains Mono, monospace', 
+          color: 'var(--color-text-muted)', 
+          textTransform: 'uppercase', 
+          letterSpacing: '0.05em' 
+        }}>
+          Confidence
+        </div>
+        <div style={{ 
+          fontSize: 11, 
+          fontWeight: 600, 
+          color: color, 
+          textTransform: 'uppercase', 
+          letterSpacing: '0.02em',
+          marginTop: 1
+        }}>
+          {label}
+        </div>
       </div>
     </div>
   );

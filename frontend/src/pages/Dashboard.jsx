@@ -20,72 +20,89 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div style={{ padding: '32px', maxWidth: 900, margin: '0 auto' }}>
+    <div style={{ padding: '48px 32px', maxWidth: 1000, margin: '0 auto' }}>
       {/* Hero */}
-      <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8, background: 'linear-gradient(135deg, #f1f5f9, var(--color-violet-light))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+      <div style={{ marginBottom: 48 }}>
+        <div className="step-num">.01 / OVERVIEW</div>
+        <h1 style={{ 
+          fontFamily: 'Space Grotesk, sans-serif', 
+          fontSize: 36, 
+          fontWeight: 700, 
+          letterSpacing: '0.03em', 
+          color: '#ffffff', 
+          textTransform: 'uppercase', 
+          marginBottom: 12 
+        }}>
           Knowledge Base
         </h1>
-        <p style={{ fontSize: 14, color: 'var(--color-text-muted)' }}>
-          Upload documents, monitor indexing, and check system status
+        <p style={{ fontSize: 13, color: 'var(--color-text-secondary)', letterSpacing: '0.01em' }}>
+          Upload source documents, monitor Pinecone indexing, and inspect system latency.
         </p>
       </div>
 
-      {/* System Status */}
-      <div style={{ marginBottom: 28 }}>
-        <SectionTitle icon={<Server size={14} />} title="System Status" />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginTop: 12 }}>
-          <ServiceCard
-            name="Pinecone"
-            icon={<Database size={16} />}
-            service={health?.services?.find(s => s.name === 'pinecone')}
-          />
-          <ServiceCard
-            name="Ollama LLM"
-            icon={<Cpu size={16} />}
-            service={health?.services?.find(s => s.name === 'ollama')}
-          />
-          <div className="stat-card">
-            <div style={{ fontSize: 11, color: 'var(--color-text-muted)', marginBottom: 4, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Documents</div>
-            <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--color-violet-light)' }}>
-              {uploadedDocs.length}
+      {/* Grid Layout for Status and Upload */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 32, marginBottom: 32 }}>
+        
+        {/* System Status Section */}
+        <div>
+          <SectionTitle icon={<Server size={14} />} title="System Status" />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginTop: 16 }}>
+            <ServiceCard
+              name="Pinecone Index"
+              icon={<Database size={16} />}
+              service={health?.services?.find(s => s.name === 'pinecone')}
+            />
+            <ServiceCard
+              name="Ollama LLM"
+              icon={<Cpu size={16} />}
+              service={health?.services?.find(s => s.name === 'ollama')}
+            />
+            <div className="stat-card">
+              <div style={{ fontSize: 10, color: 'var(--color-text-muted)', marginBottom: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Indexed Assets</div>
+              <div style={{ fontSize: 32, fontWeight: 700, fontFamily: 'Space Grotesk, sans-serif', color: '#ffffff', lineHeight: 1 }}>
+                {uploadedDocs.length}
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--color-text-muted)', marginTop: 8, textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: 'JetBrains Mono, monospace' }}>
+                documents online
+              </div>
             </div>
-            <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>indexed</div>
           </div>
         </div>
-      </div>
 
-      {/* Upload */}
-      <div style={{ marginBottom: 28 }}>
-        <SectionTitle icon={<FileText size={14} />} title="Upload Document" />
-        <div style={{ marginTop: 12 }}>
-          <DropZone />
+        {/* Upload Section */}
+        <div>
+          <SectionTitle icon={<FileText size={14} />} title="Document Ingestion" />
+          <div style={{ marginTop: 16 }}>
+            <DropZone />
+          </div>
         </div>
+
       </div>
 
       {/* Recent Documents */}
       {uploadedDocs.length > 0 && (
-        <div>
-          <SectionTitle icon={<RefreshCw size={14} />} title="Indexed Documents" />
-          <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div style={{ marginTop: 16 }}>
+          <SectionTitle icon={<RefreshCw size={14} />} title="Ingested Library" />
+          <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
             {uploadedDocs.map((doc) => (
-              <div key={doc.document_id} className="glass-card" style={{ padding: '14px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div key={doc.document_id} className="glass-card" style={{ padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                   <div style={{
-                    width: 36, height: 36, borderRadius: 10,
-                    background: 'rgba(124,58,237,0.15)',
+                    width: 40, height: 40, borderRadius: 2,
+                    background: 'rgba(255,255,255,0.03)',
+                    border: '1px solid var(--color-border)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
-                    <FileText size={16} color="var(--color-violet-light)" />
+                    <FileText size={16} color="var(--color-text-secondary)" />
                   </div>
                   <div>
-                    <p style={{ fontSize: 14, fontWeight: 600 }}>{doc.document_name}</p>
-                    <p style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
-                      {doc.chunks_indexed} chunks indexed
+                    <p style={{ fontSize: 14, fontWeight: 600, color: '#ffffff' }}>{doc.document_name}</p>
+                    <p style={{ fontSize: 11, color: 'var(--color-text-muted)', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>
+                      {doc.chunks_indexed} units indexed
                     </p>
                   </div>
                 </div>
-                <span className="badge badge-emerald">✓ Indexed</span>
+                <span className="badge badge-emerald">✓ Ready</span>
               </div>
             ))}
           </div>
@@ -97,9 +114,16 @@ export default function Dashboard() {
 
 function SectionTitle({ icon, title }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <span style={{ color: 'var(--color-violet-light)' }}>{icon}</span>
-      <h2 style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.6px' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, borderBottom: '1px solid var(--color-border)', paddingBottom: 10 }}>
+      <span style={{ color: 'var(--color-text-secondary)' }}>{icon}</span>
+      <h2 style={{ 
+        fontFamily: 'Space Grotesk, sans-serif', 
+        fontSize: 12, 
+        fontWeight: 600, 
+        color: 'var(--color-text-primary)', 
+        textTransform: 'uppercase', 
+        letterSpacing: '0.15em' 
+      }}>
         {title}
       </h2>
     </div>
@@ -112,21 +136,25 @@ function ServiceCard({ name, icon, service }) {
 
   return (
     <div className="stat-card">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <div style={{ color: 'var(--color-text-muted)' }}>{icon}</div>
         {loading ? (
-          <div className="skeleton" style={{ width: 40, height: 16 }} />
+          <div className="skeleton" style={{ width: 32, height: 8 }} />
         ) : (
           <div style={{
-            width: 8, height: 8, borderRadius: '50%',
+            width: 6, height: 6, borderRadius: '50%',
             background: healthy ? 'var(--color-emerald)' : 'var(--color-rose)',
-            boxShadow: healthy ? '0 0 8px var(--color-emerald-glow)' : '0 0 8px var(--color-rose-glow)',
           }} />
         )}
       </div>
-      <div style={{ fontSize: 16, fontWeight: 700 }}>{name}</div>
-      <div style={{ fontSize: 11, color: loading ? 'var(--color-text-muted)' : healthy ? 'var(--color-emerald)' : 'var(--color-rose)', marginTop: 2 }}>
-        {loading ? 'Checking...' : healthy ? `Online · ${service.latency_ms?.toFixed(0)}ms` : 'Offline'}
+      <div style={{ fontSize: 14, fontWeight: 600, color: '#ffffff' }}>{name}</div>
+      <div style={{ 
+        fontSize: 11, 
+        fontFamily: 'JetBrains Mono, monospace',
+        color: loading ? 'var(--color-text-muted)' : healthy ? 'var(--color-emerald)' : 'var(--color-rose)', 
+        marginTop: 6 
+      }}>
+        {loading ? 'indexing...' : healthy ? `online · ${service.latency_ms?.toFixed(0)}ms` : 'offline'}
       </div>
     </div>
   );

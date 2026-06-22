@@ -68,10 +68,11 @@ export default function Chat() {
         display: 'flex',
         flexDirection: 'column',
         borderRight: '1px solid var(--color-border-subtle)',
+        background: 'var(--color-bg-primary)',
       }}>
         {/* Header */}
         <div style={{
-          padding: '16px 24px',
+          padding: '24px 32px',
           borderBottom: '1px solid var(--color-border-subtle)',
           display: 'flex',
           justifyContent: 'space-between',
@@ -79,24 +80,33 @@ export default function Chat() {
           background: 'var(--color-bg-secondary)',
         }}>
           <div>
-            <h1 style={{ fontSize: 16, fontWeight: 700 }}>RAG Chat</h1>
-            <p style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
-              Self-healing · Citations · Confidence scoring
+            <div className="step-num">.02 / ENGINE</div>
+            <h1 style={{ 
+              fontFamily: 'Space Grotesk, sans-serif', 
+              fontSize: 18, 
+              fontWeight: 700, 
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}>
+              RAG Session
+            </h1>
+            <p style={{ fontSize: 11, color: 'var(--color-text-muted)', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>
+              SELF-HEALING · CITED GROUND TRUTH
             </p>
           </div>
           {messages.length > 0 && (
-            <button onClick={clearChat} className="btn-ghost" style={{ padding: '6px 12px', fontSize: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <Trash2 size={12} /> Clear
+            <button onClick={clearChat} className="btn-ghost" style={{ padding: '6px 12px', fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Trash2 size={11} /> Clear
             </button>
           )}
         </div>
 
         {/* Messages */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '32px' }}>
           {messages.length === 0 ? (
             <EmptyState />
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
               {messages.map((msg) => (
                 <ChatMessage key={msg.id} message={msg} />
               ))}
@@ -108,17 +118,17 @@ export default function Chat() {
 
         {/* Input */}
         <div style={{
-          padding: '16px 24px',
+          padding: '24px 32px',
           borderTop: '1px solid var(--color-border-subtle)',
           background: 'var(--color-bg-secondary)',
         }}>
-          <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 10 }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 12 }}>
             <input
               id={inputId}
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Ask a question about your documents..."
+              placeholder="Query the index..."
               className="input-field"
               disabled={isLoading}
               style={{ flex: 1 }}
@@ -127,19 +137,19 @@ export default function Chat() {
               type="submit"
               className="btn-primary"
               disabled={isLoading || !query.trim()}
-              style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 6 }}
+              style={{ padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
-              {isLoading ? <Loader size={15} style={{ animation: 'spin 1s linear infinite' }} /> : <Send size={15} />}
+              {isLoading ? <Loader size={14} style={{ animation: 'spin-slow 2s linear infinite' }} /> : <Send size={14} />}
             </button>
           </form>
         </div>
       </div>
 
       {/* Sources pane — 40% */}
-      <div style={{ flex: '0 0 40%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div style={{ flex: '0 0 40%', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: 'var(--color-bg-secondary)' }}>
         {/* Confidence header */}
         <div style={{
-          padding: '16px 20px',
+          padding: '24px',
           borderBottom: '1px solid var(--color-border-subtle)',
           background: 'var(--color-bg-secondary)',
           display: 'flex',
@@ -147,11 +157,21 @@ export default function Chat() {
           justifyContent: 'space-between',
         }}>
           <div>
-            <h2 style={{ fontSize: 14, fontWeight: 700 }}>Sources & Confidence</h2>
-            <p style={{ fontSize: 11, color: 'var(--color-text-muted)' }}>Retrieved context chunks</p>
+            <h2 style={{ 
+              fontFamily: 'Space Grotesk, sans-serif', 
+              fontSize: 13, 
+              fontWeight: 700, 
+              textTransform: 'uppercase', 
+              letterSpacing: '0.05em' 
+            }}>
+              Telemetry
+            </h2>
+            <p style={{ fontSize: 11, color: 'var(--color-text-muted)', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>
+              relevance metrics
+            </p>
           </div>
           {currentConfidence !== null && (
-            <ConfidenceBadge confidence={currentConfidence} size={64} />
+            <ConfidenceBadge confidence={currentConfidence} size={60} />
           )}
         </div>
 
@@ -171,41 +191,44 @@ function ChatMessage({ message }) {
       className="animate-fade-in"
       style={{ display: 'flex', flexDirection: 'column', alignItems: isUser ? 'flex-end' : 'flex-start' }}
     >
-      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, flexDirection: isUser ? 'row-reverse' : 'row' }}>
-        {/* Avatar */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, flexDirection: isUser ? 'row-reverse' : 'row', width: '100%' }}>
+        {/* Monogram Avatar */}
         <div style={{
-          width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
-          background: isUser ? 'var(--gradient-violet)' : 'rgba(255,255,255,0.08)',
+          width: 28, height: 28, borderRadius: 2, flexShrink: 0,
+          background: isUser ? '#ffffff' : 'rgba(255,255,255,0.05)',
+          border: '1px solid var(--color-border)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 10, fontWeight: 700, color: isUser ? '#000000' : 'var(--color-text-secondary)',
+          fontFamily: 'Space Grotesk, sans-serif'
         }}>
-          {isUser ? <User size={14} color="white" /> : <Bot size={14} color="var(--color-violet-light)" />}
+          {isUser ? 'U' : 'AI'}
         </div>
 
         {/* Bubble */}
         <div className={isUser ? 'message-user' : 'message-assistant'}>
-          <p style={{ fontSize: 14, lineHeight: 1.7, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+          <p style={{ fontSize: 13, lineHeight: 1.7, whiteSpace: 'pre-wrap', wordBreak: 'break-word', color: 'var(--color-text-primary)' }}>
             {message.content}
           </p>
 
           {/* Metadata for assistant messages */}
           {!isUser && !message.isError && message.confidence !== undefined && (
             <div style={{
-              marginTop: 10,
-              paddingTop: 10,
+              marginTop: 14,
+              paddingTop: 12,
               borderTop: '1px solid var(--color-border-subtle)',
               display: 'flex',
               gap: 8,
               flexWrap: 'wrap',
             }}>
               <span className={`badge ${message.confidence >= 0.70 ? 'badge-emerald' : 'badge-rose'}`}>
-                {message.is_grounded ? <CheckCircle size={9} /> : <XCircle size={9} />}
+                {message.is_grounded ? <CheckCircle size={10} /> : <XCircle size={10} />}
                 {message.is_grounded ? 'Grounded' : 'Ungrounded'}
               </span>
               <span className="badge badge-violet">
-                {Math.round(message.confidence * 100)}% confidence
+                {Math.round(message.confidence * 100)}% conf
               </span>
-              <span style={{ fontSize: 11, color: 'var(--color-text-muted)', alignSelf: 'center' }}>
-                {message.processing_time_ms?.toFixed(0)}ms
+              <span style={{ fontSize: 10, color: 'var(--color-text-muted)', alignSelf: 'center', fontFamily: 'JetBrains Mono, monospace' }}>
+                {message.processing_time_ms?.toFixed(0)}ms latency
               </span>
             </div>
           )}
@@ -217,25 +240,28 @@ function ChatMessage({ message }) {
 
 function TypingIndicator() {
   return (
-    <div className="animate-fade-in" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <div className="animate-fade-in" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
       <div style={{
-        width: 28, height: 28, borderRadius: '50%',
-        background: 'rgba(255,255,255,0.08)',
+        width: 28, height: 28, borderRadius: 2,
+        background: 'rgba(255,255,255,0.05)',
+        border: '1px solid var(--color-border)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 10, fontWeight: 700, color: 'var(--color-text-secondary)',
+        fontFamily: 'Space Grotesk, sans-serif'
       }}>
-        <Bot size={14} color="var(--color-violet-light)" />
+        AI
       </div>
       <div className="message-assistant" style={{ padding: '12px 16px' }}>
-        <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
           {[0, 1, 2].map((i) => (
             <div key={i} style={{
-              width: 6, height: 6, borderRadius: '50%',
-              background: 'var(--color-violet-light)',
-              animation: `pulse-glow 1.4s ease-in-out ${i * 0.2}s infinite`,
+              width: 4, height: 4, borderRadius: '50%',
+              background: 'var(--color-text-secondary)',
+              animation: `spin-slow 1.4s ease-in-out ${i * 0.2}s infinite`,
             }} />
           ))}
-          <span style={{ fontSize: 12, color: 'var(--color-text-muted)', marginLeft: 6 }}>
-            Healing & generating...
+          <span style={{ fontSize: 11, fontFamily: 'JetBrains Mono, monospace', color: 'var(--color-text-muted)', marginLeft: 6 }}>
+            HEALING RETRIEVAL & GENERATING...
           </span>
         </div>
       </div>
@@ -245,46 +271,55 @@ function TypingIndicator() {
 
 function EmptyState() {
   const examples = [
-    'What is the self-attention mechanism?',
     'Explain the RAG retrieval pipeline',
+    'What is the self-attention mechanism?',
     'How does hallucination detection work?',
   ];
-  const { addMessage } = useAppStore();
   return (
     <div style={{
       height: '100%', display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center', gap: 24,
+      alignItems: 'center', justifyContent: 'center', gap: 32,
     }}>
       <div style={{ textAlign: 'center' }}>
         <div style={{
-          width: 56, height: 56, borderRadius: 16,
-          background: 'rgba(124,58,237,0.15)',
+          width: 48, height: 48, borderRadius: 2,
+          background: 'rgba(255,255,255,0.02)',
+          border: '1px solid var(--color-border)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          margin: '0 auto 16px', border: '1px solid rgba(124,58,237,0.3)',
+          margin: '0 auto 16px',
         }}>
-          <Bot size={24} color="var(--color-violet-light)" />
+          <Bot size={20} color="var(--color-text-secondary)" />
         </div>
-        <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>Ask your knowledge base</h2>
-        <p style={{ fontSize: 14, color: 'var(--color-text-muted)' }}>
-          Upload documents first, then ask anything
+        <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 16, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>
+          Query Console
+        </h2>
+        <p style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
+          Enter a prompt below to run the Self-Healing RAG loop.
         </p>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%', maxWidth: 340 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%', maxWidth: 360 }}>
         {examples.map((ex) => (
           <button
             key={ex}
             onClick={() => {
-              const event = { preventDefault: () => {} };
-              document.querySelector('input[type="text"]').value = ex;
+              const inp = document.querySelector('input[type="text"]');
+              if (inp) {
+                inp.value = ex;
+                // Dispatch event to update React state
+                const ev = new Event('input', { bubbles: true });
+                inp.dispatchEvent(ev);
+                inp.focus();
+              }
             }}
             style={{
-              background: 'rgba(255,255,255,0.03)', border: '1px solid var(--color-border-subtle)',
-              borderRadius: 10, padding: '10px 14px', color: 'var(--color-text-secondary)',
-              fontSize: 13, cursor: 'pointer', textAlign: 'left',
-              transition: 'all 0.15s ease',
+              background: '#141416', border: '1px solid var(--color-border)',
+              borderRadius: 2, padding: '12px 16px', color: 'var(--color-text-secondary)',
+              fontSize: 12, cursor: 'pointer', textAlign: 'left',
+              transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+              fontFamily: 'Outfit, sans-serif'
             }}
-            onMouseEnter={(e) => e.currentTarget.style.borderColor = 'rgba(124,58,237,0.4)'}
-            onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--color-border-subtle)'}
+            onMouseEnter={(e) => e.currentTarget.style.borderColor = '#ffffff'}
+            onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--color-border)'}
           >
             "{ex}"
           </button>
