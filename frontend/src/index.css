@@ -8,31 +8,31 @@
 
 :root {
   /* Color Palette */
-  --bg-primary: #0F172A;     /* Slate-900 */
-  --bg-secondary: #0B0F19;   /* Deeper background */
-  --bg-surface: #1E293B;     /* Slate-800 for cards */
-  --bg-surface-hover: #334155;
+  --bg-primary: #FFFFFF;     /* Pure White */
+  --bg-secondary: #F8FAFC;   /* Slate-50 */
+  --bg-surface: #FFFFFF;     /* Card background */
+  --bg-surface-hover: #F1F5F9; /* Slate-100 */
   
-  --color-border: rgba(255, 255, 255, 0.06);
-  --color-border-hover: rgba(255, 255, 255, 0.12);
+  --color-border: #E2E8F0;     /* Slate-200 */
+  --color-border-hover: #CBD5E1; /* Slate-300 */
   
-  --accent: #6366F1;         /* Indigo primary */
-  --accent-hover: #4F46E5;
-  --accent-light: rgba(99, 102, 241, 0.12);
+  --accent: #4F46E5;         /* Indigo-600 */
+  --accent-hover: #4338CA;   /* Indigo-700 */
+  --accent-light: rgba(79, 70, 229, 0.06); /* Indigo-600 with opacity */
   
-  --text-light: #F8FAFC;     /* Slate-50 */
-  --text-dark: #F8FAFC;
-  --text-secondary: #94A3B8; /* Slate-400 */
-  --text-muted: #64748B;     /* Slate-500 */
+  --text-light: #0F172A;     /* Slate-900 primary text */
+  --text-dark: #0F172A;      /* Slate-900 primary text */
+  --text-secondary: #475569; /* Slate-600 secondary text */
+  --text-muted: #64748B;     /* Slate-500 muted text */
   
   /* Status Colors */
   --color-emerald: #10B981;  /* Success */
   --color-rose: #EF4444;     /* Error/Danger */
   --color-amber: #F59E0B;    /* Warning */
   
-  --color-success-light: rgba(16, 185, 129, 0.1);
-  --color-danger-light: rgba(239, 68, 68, 0.1);
-  --color-warning-light: rgba(245, 158, 11, 0.1);
+  --color-success-light: rgba(16, 185, 129, 0.08);
+  --color-danger-light: rgba(239, 68, 68, 0.08);
+  --color-warning-light: rgba(245, 158, 11, 0.08);
 
   /* Mappings */
   --color-bg-primary: var(--bg-primary);
@@ -130,7 +130,7 @@ body {
   border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
@@ -139,7 +139,7 @@ body {
 .telemetry-card:hover {
   border-color: var(--color-border-hover);
   transform: translateY(-2px);
-  box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.3), 0 4px 8px -2px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
 }
 
 .glass-card {
@@ -147,7 +147,7 @@ body {
   border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 28px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05);
 }
 
 /* ---- Interactive Buttons ---- */
@@ -164,7 +164,7 @@ body {
   letter-spacing: normal;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -174,21 +174,21 @@ body {
   background: var(--accent-hover);
   border-color: var(--accent-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 }
 .btn-primary:active:not(:disabled) {
   transform: translateY(0);
 }
 .btn-primary:disabled {
-  background: #334155;
-  border-color: #334155;
-  color: var(--text-secondary);
+  background: #E2E8F0;
+  border-color: #E2E8F0;
+  color: #94A3B8;
   box-shadow: none;
   cursor: not-allowed;
 }
 
 .btn-ghost {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(15, 23, 42, 0.02);
   color: var(--text-light);
   border: 1px solid var(--color-border);
   border-radius: 8px;
@@ -204,13 +204,13 @@ body {
   gap: 6px;
 }
 .btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(15, 23, 42, 0.05);
   border-color: var(--color-border-hover);
 }
 
 /* ---- Input Fields ---- */
 .input-field {
-  background: rgba(15, 23, 42, 0.4);
+  background: #FFFFFF;
   border: 1px solid var(--color-border);
   border-radius: 8px;
   color: var(--text-light);
@@ -220,11 +220,11 @@ body {
   transition: all 0.2s ease;
   width: 100%;
   outline: none;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 .input-field:focus {
   border-color: var(--accent);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 3px var(--accent-light);
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04), 0 0 0 3px var(--accent-light);
 }
 .input-field::placeholder {
   color: var(--text-muted);
@@ -266,7 +266,7 @@ body {
 
 /* ---- Skeleton loader ---- */
 .skeleton {
-  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+  background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
   border-radius: 4px;
@@ -429,7 +429,7 @@ body {
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: rgba(30, 41, 59, 0.2);
+  background: rgba(15, 23, 42, 0.01);
 }
 .dropzone:hover, .dropzone.active {
   border-color: var(--accent);
@@ -496,7 +496,7 @@ body {
   justify-content: space-between;
   min-height: 240px;
   text-decoration: none;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
@@ -519,7 +519,7 @@ body {
 .hub-card:hover {
   border-color: rgba(99, 102, 241, 0.3);
   transform: translateY(-4px);
-  box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.2), 0 4px 12px -2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.15), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
 }
 
 .hub-icon-wrapper {

@@ -167,7 +167,7 @@ function SourceCard({ source, index }) {
 
       {/* Relevance progress bar */}
       <div>
-        <div className="progress-bar-track" style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 2 }}>
+        <div className="progress-bar-track" style={{ background: 'var(--color-border)', borderRadius: 2 }}>
           <div
             className="progress-bar-fill"
             style={{

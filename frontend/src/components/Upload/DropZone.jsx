@@ -45,8 +45,8 @@ export default function DropZone() {
         className={`dropzone ${isDragActive ? 'active' : ''}`}
         style={{
           opacity: uploadStatus === 'uploading' ? 0.7 : 1,
-          border: isDragActive ? '1px solid var(--text-light)' : '1px solid var(--hairline-light)',
-          background: isDragActive ? 'rgba(0, 0, 0, 0.02)' : 'transparent',
+          border: isDragActive ? '1px solid var(--accent)' : '1px solid var(--color-border)',
+          background: isDragActive ? 'var(--accent-light)' : 'transparent',
           padding: '24px 32px',
           borderRadius: '8px',
           cursor: 'pointer',

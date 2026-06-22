@@ -125,7 +125,7 @@ export default function Dashboard() {
                 <div>
                   <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-light)' }}>{doc.document_name}</p>
                   <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>
-                    ID: <code style={{ fontFamily: 'monospace', fontSize: 11, background: 'rgba(255,255,255,0.03)', padding: '2px 6px', borderRadius: 4 }}>{doc.document_id}</code> &middot; {doc.chunks_indexed} semantic chunks parsed
+                    ID: <code style={{ fontFamily: 'monospace', fontSize: 11, background: 'var(--bg-secondary)', padding: '2px 6px', borderRadius: 4 }}>{doc.document_id}</code> &middot; {doc.chunks_indexed} semantic chunks parsed
                   </p>
                 </div>
                 <span className="badge badge-emerald">indexed</span>

@@ -190,6 +190,7 @@ export default function Chat() {
           <SourcesPanel sources={currentSources} healing={currentHealing} />
         </div>
       </div>
+      </div>
     </div>
   );
 }
@@ -212,7 +213,7 @@ function ChatMessage({ message }) {
         width: 32,
         height: 32,
         borderRadius: '50%',
-        background: isUser ? 'var(--accent-light)' : 'rgba(255, 255, 255, 0.03)',
+        background: isUser ? 'var(--accent-light)' : 'var(--bg-secondary)',
         border: isUser ? '1px solid rgba(99, 102, 241, 0.2)' : '1px solid var(--color-border)',
         display: 'flex',
         alignItems: 'center',
@@ -299,7 +300,7 @@ function TypingIndicator() {
         width: 32,
         height: 32,
         borderRadius: '50%',
-        background: 'rgba(255, 255, 255, 0.03)',
+        background: 'var(--bg-secondary)',
         border: '1px solid var(--color-border)',
         display: 'flex',
         alignItems: 'center',

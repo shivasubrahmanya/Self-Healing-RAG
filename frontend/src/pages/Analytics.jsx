@@ -10,23 +10,19 @@ import { useAppStore } from '../store/appStore';
 import SubpageHeader from '../components/Layout/SubpageHeader';
 
 export default function Analytics() {
-  const { metrics, metricsLoading, setMetrics, setMetricsLoading } = useAppStore();
-  const [history, setHistory] = useState([]);
+  const { metrics, metricsLoading, setMetrics, setMetricsLoading, metricsHistory, addMetricsHistoryPoint } = useAppStore();
 
   const loadMetrics = async () => {
     setMetricsLoading(true);
     try {
       const data = await getMetrics();
       setMetrics(data);
-      setHistory((prev) => [
-        ...prev.slice(-19),
-        {
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-          confidence: Math.round((data.average_confidence || 0) * 100),
-          retry_rate: Math.round((data.retry_rate || 0) * 100),
-          hallucination_rate: Math.round((data.hallucination_rate || 0) * 100),
-        },
-      ]);
+      addMetricsHistoryPoint({
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        confidence: Math.round((data.average_confidence || 0) * 100),
+        retry_rate: Math.round((data.retry_rate || 0) * 100),
+        hallucination_rate: Math.round((data.hallucination_rate || 0) * 100),
+      });
     } catch (e) { /* silent */ }
     finally { setMetricsLoading(false); }
   };
@@ -120,7 +116,7 @@ export default function Analytics() {
             confidence history
           </h3>
           <ResponsiveContainer width="100%" height={200}>
-            <AreaChart data={history} margin={{ left: -20, right: 10, top: 10, bottom: 0 }}>
+            <AreaChart data={metricsHistory} margin={{ left: -20, right: 10, top: 10, bottom: 0 }}>
               <defs>
                 <linearGradient id="confGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="var(--accent)" stopOpacity={0.2} />
@@ -152,7 +148,7 @@ export default function Analytics() {
             healing vs hallucination
           </h3>
           <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={history} margin={{ left: -20, right: 10, top: 10, bottom: 0 }}>
+            <LineChart data={metricsHistory} margin={{ left: -20, right: 10, top: 10, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
               <XAxis dataKey="time" tick={{ fill: 'var(--text-secondary)', fontSize: 9, fontFamily: 'Inter' }} stroke="rgba(255,255,255,0.05)" />
               <YAxis domain={[0, 100]} tick={{ fill: 'var(--text-secondary)', fontSize: 9, fontFamily: 'Inter' }} unit="%" stroke="rgba(255,255,255,0.05)" />

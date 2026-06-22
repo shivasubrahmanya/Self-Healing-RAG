@@ -43,8 +43,24 @@ export const useAppStore = create((set, get) => ({
   metrics: null,
   metricsLoading: false,
   health: null,
+  metricsHistory: (() => {
+    try {
+      const stored = localStorage.getItem('rag_metrics_history');
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      return [];
+    }
+  })(),
 
   setMetrics: (metrics) => set({ metrics }),
   setMetricsLoading: (loading) => set({ metricsLoading: loading }),
   setHealth: (health) => set({ health }),
+  addMetricsHistoryPoint: (point) =>
+    set((state) => {
+      const newHistory = [...state.metricsHistory.slice(-19), point];
+      try {
+        localStorage.setItem('rag_metrics_history', JSON.stringify(newHistory));
+      } catch (e) { /* silent */ }
+      return { metricsHistory: newHistory };
+    }),
 }));

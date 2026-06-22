@@ -26,7 +26,7 @@ export default function ConfidenceBadge({ confidence, size = 56 }) {
             cy={size / 2}
             r={r}
             fill="none"
-            stroke="rgba(255,255,255,0.04)"
+            stroke="var(--color-border)"
             strokeWidth={1.5}
           />
           {/* Fill */}

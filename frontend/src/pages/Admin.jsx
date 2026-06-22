@@ -40,7 +40,7 @@ export default function Admin() {
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                 <thead>
-                  <tr style={{ borderBottom: '1px solid var(--color-border)', background: 'rgba(255,255,255,0.01)' }}>
+                  <tr style={{ borderBottom: '1px solid var(--color-border)', background: 'var(--bg-secondary)' }}>
                     {['Document', 'ID / Hash', 'Chunks', 'Status', ''].map((h) => (
                       <th key={h} style={{
                         padding: '16px 20px',
@@ -55,11 +55,11 @@ export default function Admin() {
                   {uploadedDocs.map((doc, i) => (
                     <tr key={doc.document_id} style={{
                       borderBottom: '1px solid var(--color-border)',
-                      background: i % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent',
+                      background: i % 2 === 0 ? 'var(--bg-secondary)' : 'transparent',
                       transition: 'background-color 0.2s',
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = i % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent'}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-surface-hover)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = i % 2 === 0 ? 'var(--bg-secondary)' : 'transparent'}
                     >
                       <td style={{ padding: '16px 20px' }}>
                         <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-light)' }}>{doc.document_name}</span>
@@ -117,7 +117,7 @@ export default function Admin() {
             <p>[INFO] service_initialization: connected to pinecone index "self-healing-rag"</p>
             <p>[INFO] service_initialization: loaded embedding model bge-m3 locally</p>
             <p>[INFO] service_initialization: loaded cross-encoder reranker bge-reranker-large</p>
-            <p style={{ color: 'rgba(255,255,255,0.3)' }}>[INFO] state_graph_compile: loaded and verified all 8 pipeline nodes</p>
+            <p style={{ color: 'var(--text-muted)' }}>[INFO] state_graph_compile: loaded and verified all 8 pipeline nodes</p>
             <p>[INFO] server_handshake: listening on host 127.0.0.1:8000</p>
           </div>
         </section>
