@@ -61,4 +61,21 @@ export const getMetrics = async () => {
   return data;
 };
 
+// ---- Config ----
+export const getConfig = async () => {
+  const { data } = await api.get('/config');
+  return data;
+};
+
+// ---- Documents ----
+export const getDocuments = async () => {
+  const { data } = await api.get('/documents');
+  return data;
+};
+
+export const deleteDocument = async (documentId) => {
+  const { data } = await api.delete(`/documents/${documentId}`);
+  return data;
+};
+
 export default api;

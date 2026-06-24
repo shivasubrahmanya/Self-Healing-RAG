@@ -97,6 +97,19 @@ async def upload_document(file: UploadFile = File(...)) -> UploadResponse:
     metrics = get_metrics_service()
     await metrics.record_upload(chunks_indexed=result["chunks_indexed"])
 
+    # Register document metadata in local JSON database
+    try:
+        from app.services.document_service import get_document_service
+        doc_registry = get_document_service()
+        await doc_registry.register_document(
+            document_id=result["document_id"],
+            document_name=file.filename,
+            chunks_indexed=result["chunks_indexed"],
+            size=len(file_bytes),
+        )
+    except Exception as exc:
+        logger.error("Failed to register document in metadata registry", error=str(exc))
+
     logger.info(
         "Upload complete",
         document_id=result["document_id"],

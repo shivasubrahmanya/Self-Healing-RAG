@@ -569,3 +569,316 @@ body {
   background: rgba(255, 255, 255, 0.03);
   border-color: var(--color-border);
 }
+
+/* ============================================================
+   Aether Design Additions (Stitch Redesign Spec)
+   ============================================================ */
+
+.aether-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  border-bottom: 1px solid var(--color-border);
+  padding: 14px 32px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
+}
+
+.aether-navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.aether-logo {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.aether-logo-icon {
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, var(--accent) 0%, #818cf8 100%);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.system-pulse {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 99px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: var(--color-emerald);
+  font-weight: 500;
+}
+
+.system-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-emerald);
+  box-shadow: 0 0 8px var(--color-emerald);
+}
+
+.aether-navbar-center {
+  display: flex;
+  gap: 8px;
+}
+
+.aether-nav-link {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.aether-nav-link:hover {
+  color: var(--text-light);
+  background: var(--bg-surface-hover);
+}
+
+.aether-nav-link.active {
+  color: var(--accent);
+  background: var(--accent-light);
+  font-weight: 600;
+}
+
+.aether-navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.aether-hero-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 44px;
+  margin-bottom: 32px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+}
+
+.aether-hero-left {
+  flex: 1;
+  max-width: 580px;
+}
+
+.aether-hero-title {
+  font-size: 38px;
+  font-weight: 800;
+  color: var(--text-light);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+
+.aether-hero-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.aether-hero-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.aether-hero-right {
+  flex: 0 0 350px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+/* Healing Mesh illustration and animation styles */
+.mesh-container {
+  width: 320px;
+  height: 220px;
+  position: relative;
+}
+
+.diagnostics-score-ring {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.diagnostics-score-value {
+  position: absolute;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-light);
+}
+
+.diagnostics-score-label {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+
+.diagnostics-score-sub {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-secondary);
+  max-width: 180px;
+  margin: 0 auto;
+}
+
+.healing-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  padding-left: 20px;
+  margin-top: 16px;
+}
+
+.healing-timeline::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  bottom: 4px;
+  width: 2px;
+  background: var(--color-border);
+}
+
+.healing-timeline-item {
+  position: relative;
+}
+
+.healing-timeline-dot {
+  position: absolute;
+  left: -20px;
+  top: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-border);
+  border: 2px solid var(--bg-surface);
+}
+
+.healing-timeline-dot.active {
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+}
+
+.healing-timeline-dot.warning {
+  background: var(--color-amber);
+  box-shadow: 0 0 6px var(--color-amber);
+}
+
+.healing-timeline-dot.success {
+  background: var(--color-emerald);
+  box-shadow: 0 0 6px var(--color-emerald);
+}
+
+.healing-timeline-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.healing-timeline-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 6px;
+  background: var(--color-border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent) 0%, #818cf8 100%);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.progress-bar-fill.processing {
+  animation: barProcessing 1.5s infinite linear;
+  background-size: 30px 30px;
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+}
+
+@keyframes barProcessing {
+  0% { background-position: 0 0; }
+  100% { background-position: 30px 0; }
+}
+
+.aether-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.aether-table th {
+  padding: 12px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+}
+
+.aether-table td {
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--text-light);
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+}
+
+.aether-table tr:hover {
+  background: var(--bg-surface-hover);
+}
+

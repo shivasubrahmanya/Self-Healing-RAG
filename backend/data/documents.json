@@ -1,0 +1,16 @@
+[
+  {
+    "document_id": "doc_c72c2635e2ed6aa9",
+    "document_name": "Self-Healing RAG Platform.pdf",
+    "chunks_indexed": 10,
+    "status": "indexed",
+    "created_at": "2026-06-21T15:48:39.908321"
+  },
+  {
+    "document_id": "doc_8065db62ec433008",
+    "document_name": "Multimodal_Deep_Learning_for_Feature_Level_Fusion_in_Automated_Arecanut_Quality_Classification_Using_RGB_and_X_ray_Imaging.pdf",
+    "chunks_indexed": 170,
+    "status": "indexed",
+    "created_at": "2026-06-21T15:51:46.081669"
+  }
+]

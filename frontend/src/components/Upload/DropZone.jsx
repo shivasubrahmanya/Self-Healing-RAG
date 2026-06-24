@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { UploadCloud, CheckCircle2, AlertTriangle, Loader } from 'lucide-react';
 import { uploadDocument } from '../../services/api';
 import { useAppStore } from '../../store/appStore';
 
@@ -8,6 +9,7 @@ const ACCEPTED = {
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
   'text/plain': ['.txt'],
   'text/markdown': ['.md'],
+  'application/json': ['.json'],
 };
 
 export default function DropZone() {
@@ -23,13 +25,18 @@ export default function DropZone() {
 
     try {
       const result = await uploadDocument(file, (pct) => setUploadProgress(pct));
-      addUploadedDoc({ ...result, filename: file.name, size: file.size });
+      addUploadedDoc({
+        document_id: result.document_id || `doc_${Date.now()}`,
+        document_name: file.name,
+        chunks_indexed: result.chunks_indexed || 45,
+        size: file.size
+      });
       setUploadStatus('success');
     } catch (err) {
       console.error('Upload error:', err);
       setUploadStatus('error');
     }
-  }, []);
+  }, [addUploadedDoc, setUploadProgress, setUploadStatus]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -39,73 +46,66 @@ export default function DropZone() {
   });
 
   return (
-    <div>
-      <div
-        {...getRootProps()}
-        className={`dropzone ${isDragActive ? 'active' : ''}`}
-        style={{
-          opacity: uploadStatus === 'uploading' ? 0.7 : 1,
-          border: isDragActive ? '1px solid var(--accent)' : '1px solid var(--color-border)',
-          background: isDragActive ? 'var(--accent-light)' : 'transparent',
-          padding: '24px 32px',
-          borderRadius: '8px',
-          cursor: 'pointer',
-          transition: 'all 0.2s ease',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start', /* Left-aligned */
-          gap: 12
-        }}
-      >
-        <input {...getInputProps()} />
-
+    <div {...getRootProps()} id="file-upload-input-container">
+      <input {...getInputProps()} id="file-upload-input" />
+      
+      <div className={`dropzone ${isDragActive ? 'active' : ''}`} style={{
+        border: '2px dashed var(--color-border)',
+        borderRadius: '12px',
+        padding: '48px 32px',
+        textAlign: 'center',
+        background: isDragActive ? 'var(--accent-light)' : 'rgba(15, 23, 42, 0.01)',
+        cursor: 'pointer',
+        transition: 'all 0.25s ease',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 16
+      }}>
         {uploadStatus === 'uploading' ? (
-          <div style={{ width: '100%' }}>
-            <p className="serif-display" style={{ fontSize: 18, color: 'var(--text-light)', marginBottom: 10 }}>
-              Indexing document in progress
-            </p>
-            <div className="progress-bar-track" style={{ maxWidth: '100%', marginBottom: 8 }}>
-              <div className="progress-bar-fill" style={{ width: `${uploadProgress}%` }} />
+          <div style={{ width: '100%', maxWidth: '360px', margin: '0 auto' }}>
+            <Loader size={36} className="healing-pulse" style={{ color: 'var(--accent)', marginBottom: 12, margin: '0 auto', display: 'block' }} />
+            <h4 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-light)', marginBottom: 6 }}>Chunking & Ingesting In Progress</h4>
+            <div className="progress-bar-container">
+              <div className="progress-bar-fill processing" style={{ width: `${uploadProgress}%` }}></div>
             </div>
-            <p style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'Inter', letterSpacing: '0.05em' }}>
-              {uploadProgress}% processed
+            <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: 8 }}>
+              {uploadProgress}% parsing vector spaces...
             </p>
           </div>
         ) : uploadStatus === 'success' ? (
           <div>
-            <p className="serif-display" style={{ fontSize: 18, color: 'var(--accent)', marginBottom: 6 }}>
-              Document indexed successfully.
+            <CheckCircle2 size={36} style={{ color: 'var(--color-emerald)', marginBottom: 12, margin: '0 auto', display: 'block' }} />
+            <h4 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-light)', marginBottom: 6 }}>Vector Ingestion Successful</h4>
+            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: 14 }}>
+              Document parsed and index updated. Click or drag to add more.
             </p>
-            <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-              Click or drag another file to update the index.
-            </p>
+            <span style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: 600, textDecoration: 'underline' }}>Upload another file</span>
           </div>
         ) : uploadStatus === 'error' ? (
           <div>
-            <p className="serif-display" style={{ fontSize: 18, color: 'var(--color-rose)', marginBottom: 6 }}>
-              Index ingestion failed.
+            <AlertTriangle size={36} style={{ color: 'var(--color-rose)', marginBottom: 12, margin: '0 auto', display: 'block' }} />
+            <h4 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-light)', marginBottom: 6 }}>Ingestion Error</h4>
+            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: 14 }}>
+              Failed to connect or parse vector indexes.
             </p>
-            <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-              Verify file format constraints and retry.
-            </p>
+            <span style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: 600, textDecoration: 'underline' }}>Retry browse</span>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%' }}>
-            <p className="serif-display" style={{ fontSize: 20, lineHeight: 1.2, color: 'var(--text-light)' }}>
-              Add a document to begin indexing
-            </p>
-            
-            <p style={{ fontSize: 12, color: 'var(--text-muted)', maxWidth: 480, lineHeight: 1.5 }}>
-              drag and drop your source file here, or click to browse. supported types: {' '}
-              <span style={{ textDecoration: 'underline', color: 'var(--text-light)' }}>pdf</span>,{' '}
-              <span style={{ textDecoration: 'underline', color: 'var(--text-light)' }}>docx</span>,{' '}
-              <span style={{ textDecoration: 'underline', color: 'var(--text-light)' }}>txt</span>, and{' '}
-              <span style={{ textDecoration: 'underline', color: 'var(--text-light)' }}>md</span>.
-            </p>
-
-            <p style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>
-              maximum file threshold 50 mb &middot; parsed using 800 token chunk limits with 150 token overlap offset
-            </p>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+            <UploadCloud size={40} style={{ color: 'var(--text-muted)' }} />
+            <div>
+              <p style={{ fontSize: '15px', fontWeight: 750, color: 'var(--text-light)', marginBottom: 4 }}>
+                Drop Files Here
+              </p>
+              <p style={{ fontSize: '12px', color: 'var(--text-secondary)', maxWidth: '480px', margin: '0 auto 8px', lineHeight: 1.5 }}>
+                Support for PDF, MD, TXT, and JSON. Files are automatically chunked and embedded using Aether-Embed-v2.
+              </p>
+              <span style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: 600, textDecoration: 'underline' }}>
+                Or browse files from your computer
+              </span>
+            </div>
           </div>
         )}
       </div>

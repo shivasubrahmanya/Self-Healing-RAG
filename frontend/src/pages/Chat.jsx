@@ -4,7 +4,6 @@ import { sendChat } from '../services/api';
 import { useAppStore } from '../store/appStore';
 import ConfidenceBadge from '../components/Chat/ConfidenceBadge';
 import SourcesPanel from '../components/Chat/SourcesPanel';
-import SubpageHeader from '../components/Layout/SubpageHeader';
 
 export default function Chat() {
   const [query, setQuery] = useState('');
@@ -14,6 +13,7 @@ export default function Chat() {
     messages, isLoading, sessionId,
     currentSources, currentConfidence, currentHealing,
     addMessage, setLoading, setSessionId, setCurrentResponse, clearChat,
+    addQueryHistoryPoint,
   } = useAppStore();
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function Chat() {
   }, [messages]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     const trimmed = query.trim();
     if (!trimmed || isLoading) return;
 
@@ -49,6 +49,16 @@ export default function Chat() {
         confidence: result.confidence,
         healing: result.healing,
       });
+
+      // Record this search trace dynamically
+      addQueryHistoryPoint({
+        hash: `RAG-${Math.floor(1000 + Math.random() * 9000)}`,
+        summary: trimmed,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        confidence: `${Math.round(result.confidence * 100)}%`,
+        status: result.is_grounded ? 'grounded' : 'self-healed',
+        healing: result.healing
+      });
     } catch (err) {
       addMessage({
         role: 'assistant',
@@ -62,55 +72,50 @@ export default function Chat() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', width: '100%' }}>
-      {/* Top Navigation */}
-      <div style={{ padding: '16px 32px 0 32px', background: 'var(--bg-secondary)' }}>
-        <SubpageHeader title="Query Engine" />
-      </div>
-
-      {/* Main workspace split */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden', width: '100%' }}>
-        {/* Chat pane — 60% */}
+    <div style={{ display: 'flex', flex: 1, overflow: 'hidden', width: '100%', height: 'calc(100vh - 61px)' }}>
+      
+      {/* 1. Chat Workspace Pane (60%) */}
+      <div style={{
+        flex: '0 0 60%',
+        display: 'flex',
+        flexDirection: 'column',
+        borderRight: '1px solid var(--color-border)',
+        background: 'var(--bg-secondary)',
+        height: '100%'
+      }}>
+        {/* Header */}
         <div style={{
-          flex: '0 0 60%',
+          padding: '16px 32px',
+          borderBottom: '1px solid var(--color-border)',
           display: 'flex',
-          flexDirection: 'column',
-          borderRight: '1px solid var(--color-border)',
-          background: 'var(--bg-secondary)',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          background: '#ffffff',
         }}>
-          {/* Header */}
-          <div style={{
-            padding: '16px 32px',
-            borderBottom: '1px solid var(--color-border)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            background: 'var(--bg-secondary)',
-          }}>
-            <div>
-              <h1 style={{ 
-                fontSize: '20px', 
-                fontWeight: 700,
-                color: 'var(--text-light)', 
-                lineHeight: 1.2
-              }}>
-                Query Session
-              </h1>
-            <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>
-              Self-healing retrieval and context-guided execution.
+          <div>
+            <h1 style={{ 
+              fontSize: '18px', 
+              fontWeight: 700,
+              color: 'var(--text-light)', 
+              lineHeight: 1.2
+            }}>
+              Query Session
+            </h1>
+            <p style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 2 }}>
+              Ask questions against vector collections. Healing processes show up in the Diagnostics audit.
             </p>
           </div>
           {messages.length > 0 && (
-            <button onClick={clearChat} className="btn-ghost" style={{ padding: '8px 14px', fontSize: 12 }}>
+            <button onClick={clearChat} className="btn-ghost" style={{ padding: '6px 12px', fontSize: 11 }}>
               <Trash2 size={12} /> Clear Chat
             </button>
           )}
         </div>
 
-        {/* Messages list */}
+        {/* Messages List Area */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '32px' }}>
           {messages.length === 0 ? (
-            <EmptyState />
+            <EmptyState setQuery={setQuery} />
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               {messages.map((msg) => (
@@ -122,75 +127,71 @@ export default function Chat() {
           )}
         </div>
 
-        {/* Input form */}
+        {/* User Query Form Panel */}
         <div style={{
           padding: '20px 32px',
           borderTop: '1px solid var(--color-border)',
-          background: 'var(--bg-secondary)',
+          background: '#ffffff',
         }}>
-          <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
             <input
               id={inputId}
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Ask a question about indexed sources..."
+              placeholder="Ask about system logs or configuration..."
               className="input-field"
               disabled={isLoading}
-              style={{ flex: 1 }}
+              style={{ flex: 1, height: '40px', fontSize: '13px' }}
             />
             <button
               type="submit"
               className="btn-primary"
               disabled={isLoading || !query.trim()}
-              style={{ height: '44px', width: '90px' }}
+              style={{ height: '40px', padding: '0 16px', fontSize: '12px' }}
             >
-              {isLoading ? <Loader size={16} style={{ animation: 'loading 1.5s infinite' }} /> : 'Send'}
+              {isLoading ? <Loader size={14} style={{ animation: 'loading 1.5s infinite' }} /> : 'Send'}
             </button>
           </form>
         </div>
       </div>
 
-      {/* Sources pane — 40% */}
+      {/* 2. Side Diagnostics Panel (40%) */}
       <div style={{ 
         flex: '0 0 40%', 
         display: 'flex', 
         flexDirection: 'column', 
-        overflow: 'hidden', 
-        background: 'var(--bg-primary)',
-        borderLeft: '1px solid var(--color-border)'
+        overflowY: 'auto', 
+        background: '#ffffff',
+        height: '100%'
       }}>
-        {/* Telemetry header */}
+        {/* Diagnostics Header */}
         <div style={{
-          padding: '24px',
+          padding: '20px 24px',
           borderBottom: '1px solid var(--color-border)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
         }}>
           <div>
-            <h2 style={{ 
-              fontSize: '18px', 
-              fontWeight: 700,
-              color: 'var(--text-light)'
-            }}>
+            <h2 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-light)' }}>
               Diagnostics
             </h2>
-            <p className="eyebrow" style={{ fontSize: 10, color: 'var(--text-secondary)', marginTop: 2 }}>
-              relevance metrics
-            </p>
+            <div className="eyebrow" style={{ fontSize: 9, color: 'var(--text-secondary)', marginTop: 2 }}>
+              TELEMETRY & SEARCH TRACE
+            </div>
           </div>
           {currentConfidence !== null && (
-            <ConfidenceBadge confidence={currentConfidence} size={52} />
+            <ConfidenceBadge confidence={currentConfidence} size={48} />
           )}
         </div>
 
-        {/* Sources scroll panel */}
-        <div style={{ flex: 1, overflowY: 'auto' }}>
+        {/* Diagnostics Sources Scroll */}
+        <div style={{ flex: 1 }}>
           <SourcesPanel sources={currentSources} healing={currentHealing} />
         </div>
       </div>
-      </div>
+
     </div>
   );
 }
@@ -202,16 +203,16 @@ function ChatMessage({ message }) {
       className="animate-fade-in"
       style={{ 
         display: 'flex', 
-        gap: 16,
+        gap: 12,
         width: '100%',
         alignItems: 'flex-start',
         flexDirection: isUser ? 'row-reverse' : 'row'
       }}
     >
-      {/* Avatar Icon */}
+      {/* Icon Avatar */}
       <div style={{
-        width: 32,
-        height: 32,
+        width: 28,
+        height: 28,
         borderRadius: '50%',
         background: isUser ? 'var(--accent-light)' : 'var(--bg-secondary)',
         border: isUser ? '1px solid rgba(99, 102, 241, 0.2)' : '1px solid var(--color-border)',
@@ -221,49 +222,46 @@ function ChatMessage({ message }) {
         color: isUser ? 'var(--accent)' : 'var(--text-light)',
         flexShrink: 0,
       }}>
-        {isUser ? <User size={14} /> : <Sparkles size={14} />}
+        {isUser ? <User size={12} /> : <Sparkles size={12} />}
       </div>
 
-      {/* Message Bubble */}
-      <div style={{ flex: 1, maxWidth: '75%', textAlign: isUser ? 'right' : 'left' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, justifyContent: isUser ? 'flex-end' : 'flex-start' }}>
-          <span className="eyebrow" style={{ fontSize: 9, color: 'var(--text-secondary)' }}>
-            {isUser ? 'user query' : 'healing agent response'}
+      {/* Bubble text */}
+      <div style={{ flex: 1, maxWidth: '80%', textAlign: isUser ? 'right' : 'left' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2, justifyContent: isUser ? 'flex-end' : 'flex-start' }}>
+          <span className="eyebrow" style={{ fontSize: '9px', color: 'var(--text-muted)' }}>
+            {isUser ? 'user' : 'aether RAG pipeline'}
           </span>
         </div>
 
-        <div className={isUser ? 'message-user' : 'message-assistant'}>
+        <div className={isUser ? 'message-user' : 'message-assistant'} style={{ textAlign: 'left', padding: '12px 16px', borderRadius: 8 }}>
           <p style={{ 
-            fontSize: 14, 
-            lineHeight: 1.6, 
+            fontSize: '13px', 
+            lineHeight: 1.55, 
             whiteSpace: 'pre-wrap', 
             wordBreak: 'break-word', 
             color: 'var(--text-light)',
-            fontWeight: 400,
-            textAlign: 'left'
+            fontWeight: 400
           }}>
             {message.content}
           </p>
         </div>
 
-        {/* Telemetry data for assistant */}
+        {/* Telemetry info under assistant bubbles */}
         {!isUser && !message.isError && message.confidence !== undefined && (
           <div style={{
-            marginTop: 8,
+            marginTop: 6,
             display: 'inline-flex',
-            gap: 12,
+            gap: 10,
             alignItems: 'center',
-            flexWrap: 'wrap',
             background: 'var(--bg-surface)',
-            padding: '6px 12px',
+            padding: '4px 10px',
             border: '1px solid var(--color-border)',
             borderRadius: 6
           }}>
             <span style={{ 
-              fontSize: 10, 
-              fontFamily: 'Inter', 
-              fontWeight: 600, 
-              color: message.confidence >= 0.70 ? 'var(--color-emerald)' : 'var(--color-rose)', 
+              fontSize: '9px', 
+              fontWeight: 700, 
+              color: message.is_grounded ? 'var(--color-emerald)' : 'var(--color-rose)', 
               textTransform: 'uppercase', 
               letterSpacing: '0.05em',
               display: 'flex',
@@ -272,18 +270,18 @@ function ChatMessage({ message }) {
             }}>
               {message.is_grounded ? (
                 <>
-                  <CheckCircle size={10} style={{ color: 'var(--color-emerald)' }} /> grounded
+                  <CheckCircle size={10} /> Grounded
                 </>
               ) : (
                 <>
-                  <XCircle size={10} style={{ color: 'var(--color-rose)' }} /> ungrounded
+                  <XCircle size={10} /> Ungrounded
                 </>
               )}
             </span>
-            <span style={{ fontSize: 10, color: 'var(--text-secondary)', fontFamily: 'Inter' }}>
+            <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>
               &middot; {Math.round(message.confidence * 100)}% confidence
             </span>
-            <span style={{ fontSize: 10, color: 'var(--text-secondary)', fontFamily: 'Inter' }}>
+            <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>
               &middot; {message.processing_time_ms?.toFixed(0)}ms latency
             </span>
           </div>
@@ -295,10 +293,10 @@ function ChatMessage({ message }) {
 
 function TypingIndicator() {
   return (
-    <div className="animate-fade-in" style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+    <div className="animate-fade-in" style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
       <div style={{
-        width: 32,
-        height: 32,
+        width: 28,
+        height: 28,
         borderRadius: '50%',
         background: 'var(--bg-secondary)',
         border: '1px solid var(--color-border)',
@@ -307,15 +305,15 @@ function TypingIndicator() {
         justifyContent: 'center',
         color: 'var(--text-light)',
       }}>
-        <Sparkles size={14} />
+        <Sparkles size={12} />
       </div>
       <div style={{ flex: 1 }}>
-        <div className="eyebrow" style={{ fontSize: 9, color: 'var(--text-secondary)', marginBottom: 4 }}>
-          healing agent
+        <div className="eyebrow" style={{ fontSize: '9px', color: 'var(--text-muted)', marginBottom: 2 }}>
+          healing search loop active
         </div>
-        <div className="message-assistant" style={{ display: 'flex', gap: 8, alignItems: 'center', padding: '12px 18px' }}>
-          <div className="skeleton" style={{ width: 16, height: 16, borderRadius: '50%' }} />
-          <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+        <div className="message-assistant" style={{ display: 'flex', gap: 8, alignItems: 'center', padding: '10px 16px', borderRadius: 8 }}>
+          <div className="skeleton" style={{ width: 14, height: 14, borderRadius: '50%' }} />
+          <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
             Expanding query contexts and generating verified answer...
           </span>
         </div>
@@ -324,7 +322,7 @@ function TypingIndicator() {
   );
 }
 
-function EmptyState() {
+function EmptyState({ setQuery }) {
   const examples = [
     'Explain the self-attention mechanism',
     'What is the retrieval pipeline configuration?',
@@ -333,41 +331,34 @@ function EmptyState() {
   return (
     <div style={{
       height: '100%', display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center', gap: 24,
-      maxWidth: 500, margin: '40px auto 0'
+      alignItems: 'center', justifyContent: 'center', gap: 20,
+      maxWidth: 450, margin: '40px auto 0'
     }}>
       <div style={{ textAlign: 'center' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text-light)', marginBottom: 8 }}>
-          Consult the index
+        <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-light)', marginBottom: 8 }}>
+          Aether Query Engine
         </h2>
-        <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-          Submit a query to execute the multi-step retrieval state machine. The engine will automatically expand query scopes and retry if results are insufficient.
+        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+          Submit queries to traverse the vector index. If the initial search score falls below 0.70, autonomous healing rewrites and retries will optimize the results.
         </p>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%' }}>
         {examples.map((ex) => (
           <button
             key={ex}
-            onClick={() => {
-              const inp = document.querySelector('input[type="text"]');
-              if (inp) {
-                inp.value = ex;
-                const ev = new Event('input', { bubbles: true });
-                inp.dispatchEvent(ev);
-                inp.focus();
-              }
-            }}
+            onClick={() => setQuery(ex)}
             className="btn-ghost"
             style={{
-              padding: '14px 20px',
-              borderRadius: '10px',
+              padding: '12px 16px',
+              borderRadius: '8px',
               justifyContent: 'space-between',
               width: '100%',
-              fontSize: '13px'
+              fontSize: '12px',
+              background: '#ffffff'
             }}
           >
             <span>"{ex}"</span>
-            <span style={{ fontSize: 14, color: 'var(--accent)' }}>&rarr;</span>
+            <span style={{ fontSize: 13, color: 'var(--accent)' }}>&rarr;</span>
           </button>
         ))}
       </div>

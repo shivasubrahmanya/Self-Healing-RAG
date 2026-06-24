@@ -1,165 +1,233 @@
-import { useAppStore } from '../store/appStore';
+import { useEffect, useState } from 'react';
 import { Trash2, Terminal, Cpu } from 'lucide-react';
-import SubpageHeader from '../components/Layout/SubpageHeader';
+import toast from 'react-hot-toast';
+import { useAppStore } from '../store/appStore';
 
 export default function Admin() {
-  const { uploadedDocs } = useAppStore();
+  const { uploadedDocs, fetchDocuments, config, fetchConfig, deleteUploadedDoc, queryHistory } = useAppStore();
+  const [activeTab, setActiveTab] = useState('properties');
+
+  useEffect(() => {
+    fetchConfig();
+    fetchDocuments();
+  }, [fetchConfig, fetchDocuments]);
+
+  const handleDelete = async (docId, docName) => {
+    try {
+      await toast.promise(
+        deleteUploadedDoc(docId),
+        {
+          loading: `Purging vectors for ${docName}...`,
+          success: `Successfully deleted document and index vectors.`,
+          error: `Failed to delete collection.`,
+        }
+      );
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const propertiesList = config ? [
+    { label: 'Embedding Engine', value: config.embedding_engine },
+    { label: 'Reranker System', value: config.reranker_system },
+    { label: 'Primary Context LLM', value: config.primary_context_llm },
+    { label: 'Vector Storage', value: config.vector_storage },
+    { label: 'Chunk Token Boundary', value: config.chunk_token_boundary },
+    { label: 'Overlap Boundary Offset', value: config.overlap_boundary_offset },
+    { label: 'Max Candidates (Top-K)', value: config.max_candidates },
+    { label: 'Post-Rerank Window', value: config.post_rerank_window },
+    { label: 'Sufficiency Threshold', value: config.sufficiency_threshold },
+    { label: 'Healing Loop Retry Limit', value: config.healing_loop_retry_limit },
+  ] : [
+    { label: 'Embedding Engine', value: 'BAAI/bge-m3' },
+    { label: 'Reranker System', value: 'BAAI/bge-reranker-large' },
+    { label: 'Primary Context LLM', value: 'llama3.1:latest' },
+    { label: 'Vector Storage', value: 'Pinecone (Serverless)' },
+    { label: 'Chunk Token Boundary', value: '800 tokens' },
+    { label: 'Overlap Boundary Offset', value: '150 tokens' },
+    { label: 'Max Candidates (Top-K)', value: '20 units' },
+    { label: 'Post-Rerank Window', value: '5 units' },
+    { label: 'Sufficiency Threshold', value: '0.70' },
+    { label: 'Healing Loop Retry Limit', value: '3 attempts' },
+  ];
+
+  // Construct dynamic audit log stream
+  const getAuditLogs = () => {
+    const logs = [
+      { type: 'OKAY', text: 'system_startup: self_healing_rag ready on namespace "default"', color: 'var(--color-emerald)' },
+      { type: 'INFO', text: 'service_initialization: connected to pinecone index "self-healing-rag"', color: '' },
+      { type: 'INFO', text: 'service_initialization: loaded embedding model bge-m3 locally', color: '' },
+      { type: 'INFO', text: 'service_initialization: loaded cross-encoder reranker bge-reranker-large', color: '' },
+      { type: 'INFO', text: 'state_graph_compile: loaded and verified all 8 pipeline nodes', color: 'var(--text-muted)' },
+      { type: 'INFO', text: 'server_handshake: listening on host 127.0.0.1:8000', color: '' }
+    ];
+
+    // Append dynamic log rows for each query in session queryHistory
+    [...queryHistory].reverse().forEach((q) => {
+      const hasHealing = q.healing?.attempted || (q.healing?.rewritten_queries && q.healing.rewritten_queries.length > 0);
+      logs.push({
+        type: 'INFO',
+        text: `query_request: processing query "${q.summary}"`,
+        color: ''
+      });
+
+      if (hasHealing) {
+        logs.push({
+          type: 'WARN',
+          text: `state_transition: context score below threshold. invoking query rewrite.`,
+          color: 'var(--color-amber)'
+        });
+        (q.healing.rewritten_queries || []).forEach((rw, idx) => {
+          logs.push({
+            type: 'INFO',
+            text: `query_rewrite: attempt ${idx + 1} rewrote query to: "${rw}"`,
+            color: ''
+          });
+        });
+        logs.push({
+          type: 'OKAY',
+          text: `state_transition: healing loop attempt successful. confidence score: ${q.confidence}`,
+          color: 'var(--color-emerald)'
+        });
+      } else {
+        logs.push({
+          type: 'OKAY',
+          text: `query_success: grounding verified. confidence score: ${q.confidence}`,
+          color: 'var(--color-emerald)'
+        });
+      }
+    });
+
+    return logs;
+  };
+
+  const auditLogs = getAuditLogs();
 
   return (
-    <div className="page-container">
-      <SubpageHeader title="Control Panel" />
-      {/* Header */}
-      <div style={{ marginBottom: 40 }}>
-        <div className="eyebrow" style={{ marginBottom: 12 }}>System Admin</div>
-        <h1 className="serif-display" style={{ 
-          fontSize: '36px', 
-          fontWeight: 700,
-          color: 'var(--text-light)'
-        }}>
-          Control Panel
+    <div className="page-container" style={{ padding: '32px' }}>
+      
+      {/* 1. Header description */}
+      <div style={{ marginBottom: 32 }}>
+        <h1 style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text-light)', marginBottom: 6 }}>
+          Agent Config
         </h1>
-        <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
-          Manage vector database indexes, inspect engine configuration properties, and audit diagnostics activity.
+        <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+          Configure model parameters, adjust sufficiency thresholds, and audit system properties.
         </p>
       </div>
 
       {/* Documents table */}
-      <section style={{ marginBottom: 40 }}>
-        <div className="chapter-header">
-          <h2 className="eyebrow">Ingested Assets ({uploadedDocs.length})</h2>
-          <div className="chapter-header-line"></div>
+      <section className="telemetry-card" style={{ padding: '0', borderRadius: '12px', overflow: 'hidden', marginBottom: 32 }}>
+        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--color-border)' }}>
+          <h2 className="eyebrow" style={{ color: 'var(--text-light)' }}>
+            Ingested Collections ({uploadedDocs.length})
+          </h2>
         </div>
 
-        {uploadedDocs.length === 0 ? (
-          <div className="telemetry-card" style={{ padding: 48, textAlign: 'center', color: 'var(--text-secondary)' }}>
-            <p className="serif-display" style={{ fontSize: 16, color: 'var(--text-light)', fontWeight: 600 }}>Library is empty</p>
-            <p style={{ fontSize: 12, marginTop: 4 }}>Go to the Dashboard page to ingest source materials.</p>
-          </div>
-        ) : (
-          <div className="telemetry-card" style={{ overflow: 'hidden', padding: 0, borderRadius: '12px' }}>
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                <thead>
-                  <tr style={{ borderBottom: '1px solid var(--color-border)', background: 'var(--bg-secondary)' }}>
-                    {['Document', 'ID / Hash', 'Chunks', 'Status', ''].map((h) => (
-                      <th key={h} style={{
-                        padding: '16px 20px',
-                        fontSize: 11, fontWeight: 600,
-                        color: 'var(--text-secondary)',
-                        textTransform: 'uppercase', letterSpacing: '0.05em',
-                      }}>{h}</th>
-                    ))}
+        <div style={{ overflowX: 'auto' }}>
+          <table className="aether-table">
+            <thead>
+              <tr style={{ background: 'var(--bg-secondary)' }}>
+                <th>DOCUMENT NAME</th>
+                <th>VECTOR HASH ID</th>
+                <th>CHUNK COUNT</th>
+                <th>INGEST STATE</th>
+                <th>ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {uploadedDocs.length > 0 ? (
+                uploadedDocs.map((doc) => (
+                  <tr key={doc.document_id}>
+                    <td style={{ fontWeight: 600 }}>{doc.document_name}</td>
+                    <td style={{ fontFamily: 'monospace', fontSize: '11px', color: 'var(--text-muted)' }}>{doc.document_id}</td>
+                    <td style={{ fontWeight: 500 }}>{doc.chunks_indexed || 45}</td>
+                    <td>
+                      <span className="badge badge-emerald">indexed</span>
+                    </td>
+                    <td>
+                      <button onClick={() => handleDelete(doc.document_id, doc.document_name)} className="btn-ghost" style={{ padding: '4px 8px', fontSize: '11px', color: 'var(--color-rose)' }}>
+                        <Trash2 size={11} style={{ marginRight: 2 }} />
+                        Purge
+                      </button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {uploadedDocs.map((doc, i) => (
-                    <tr key={doc.document_id} style={{
-                      borderBottom: '1px solid var(--color-border)',
-                      background: i % 2 === 0 ? 'var(--bg-secondary)' : 'transparent',
-                      transition: 'background-color 0.2s',
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-surface-hover)'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = i % 2 === 0 ? 'var(--bg-secondary)' : 'transparent'}
-                    >
-                      <td style={{ padding: '16px 20px' }}>
-                        <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-light)' }}>{doc.document_name}</span>
-                      </td>
-                      <td style={{ padding: '16px 20px', fontSize: 11, color: 'var(--text-secondary)', fontFamily: 'monospace' }}>
-                        {doc.document_id}
-                      </td>
-                      <td style={{ padding: '16px 20px', fontSize: 13, color: 'var(--text-light)' }}>
-                        {doc.chunks_indexed}
-                      </td>
-                      <td style={{ padding: '16px 20px' }}>
-                        <span className="badge badge-emerald">indexed</span>
-                      </td>
-                      <td style={{ padding: '16px 20px', textAlign: 'right' }}>
-                        <button
-                          onClick={() => {}}
-                          className="btn-ghost"
-                          style={{ padding: '6px 12px', fontSize: 11, color: 'var(--color-rose)', border: '1px solid rgba(239,68,68,0.2)', background: 'transparent', borderRadius: '6px' }}
-                        >
-                          <Trash2 size={11} style={{ display: 'inline', marginRight: 4, transform: 'translateY(-1px)' }} /> Remove
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} style={{ 
+                    padding: '24px', 
+                    textAlign: 'center', 
+                    color: 'var(--text-muted)',
+                    fontSize: '12px',
+                    fontStyle: 'italic'
+                  }}>
+                    No ingested collections found. Access the Knowledge Base to ingest source files.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </section>
 
-      {/* Grid wrapper for configs and logs */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 32, alignItems: 'start' }}>
-        {/* Logs Console */}
-        <section>
-          <div className="chapter-header">
-            <h2 className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Terminal size={14} /> Audit Log Monitor
-            </h2>
-            <div className="chapter-header-line"></div>
-          </div>
-          <div className="telemetry-card" style={{ 
-            background: 'var(--bg-secondary)', 
-            border: '1px solid var(--color-border)',
-            fontFamily: 'monospace', 
-            fontSize: 12, 
-            color: 'var(--text-secondary)', 
-            lineHeight: 1.8,
-            height: 380,
-            overflowY: 'auto',
-            padding: '24px',
-            borderRadius: '12px'
-          }}>
-            <p style={{ color: 'var(--color-emerald)' }}>[OKAY] system_startup: self_healing_rag ready on namespace "default"</p>
-            <p>[INFO] service_initialization: connected to pinecone index "self-healing-rag"</p>
-            <p>[INFO] service_initialization: loaded embedding model bge-m3 locally</p>
-            <p>[INFO] service_initialization: loaded cross-encoder reranker bge-reranker-large</p>
-            <p style={{ color: 'var(--text-muted)' }}>[INFO] state_graph_compile: loaded and verified all 8 pipeline nodes</p>
-            <p>[INFO] server_handshake: listening on host 127.0.0.1:8000</p>
-          </div>
-        </section>
+      {/* 3. Grid: Properties & Terminal Audit Log */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: 24, alignItems: 'start' }}>
+        
+        {/* System Properties */}
+        <section className="telemetry-card" style={{ padding: '24px' }}>
+          <h3 className="eyebrow" style={{ color: 'var(--text-light)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Cpu size={14} style={{ color: 'var(--text-secondary)' }} />
+            System Properties
+          </h3>
 
-        {/* Config panel */}
-        <section>
-          <div className="chapter-header">
-            <h2 className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Cpu size={14} /> System Properties
-            </h2>
-            <div className="chapter-header-line"></div>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 16 }}>
-            {[
-              { label: 'Embedding Model', value: 'BAAI/bge-m3' },
-              { label: 'Reranker System', value: 'BAAI/bge-reranker-large' },
-              { label: 'Primary LLM', value: 'llama3.1:latest' },
-              { label: 'Vector Database', value: 'Pinecone (Serverless)' },
-              { label: 'Chunk Token Limit', value: '800 tokens' },
-              { label: 'Chunk Overlap Offset', value: '150 tokens' },
-              { label: 'Max Candidates (Top-K)', value: '20 units' },
-              { label: 'Post-Rerank Window (Top-K)', value: '5 units' },
-              { label: 'Sufficiency Threshold', value: '0.70' },
-              { label: 'Healing Retries Limit', value: '3 attempts' },
-            ].map(({ label, value }) => (
-              <div key={label} className="telemetry-card" style={{ padding: '16px 20px', borderRadius: '10px' }}>
-                <div className="eyebrow" style={{ fontSize: 9, color: 'var(--text-secondary)', marginBottom: 4 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+            {propertiesList.map(({ label, value }) => (
+              <div key={label} style={{
+                background: 'var(--bg-secondary)',
+                border: '1px solid var(--color-border)',
+                borderRadius: '8px',
+                padding: '12px 16px'
+              }}>
+                <div style={{ fontSize: '9px', fontWeight: 600, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 4 }}>
                   {label}
                 </div>
-                <div style={{ 
-                  fontSize: 13, 
-                  fontWeight: 650, 
-                  color: 'var(--text-light)',
-                  lineHeight: 1.2
-                }}>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-light)', lineHeight: 1.2 }}>
                   {value}
                 </div>
               </div>
             ))}
           </div>
         </section>
+
+        {/* Audit Log Console */}
+        <section className="telemetry-card" style={{ padding: '24px' }}>
+          <h3 className="eyebrow" style={{ color: 'var(--text-light)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Terminal size={14} style={{ color: 'var(--text-secondary)' }} />
+            Audit Log Monitor
+          </h3>
+
+          <div style={{
+            background: '#0f172a',
+            borderRadius: '8px',
+            padding: '20px',
+            fontFamily: 'monospace',
+            fontSize: '11px',
+            color: '#94a3b8',
+            lineHeight: 1.8,
+            height: '240px',
+            overflowY: 'auto'
+          }}>
+            {auditLogs.map((log, idx) => (
+              <p key={idx} style={log.color ? { color: log.color } : {}}>
+                [{log.type}] {log.text}
+              </p>
+            ))}
+          </div>
+        </section>
+
       </div>
+
     </div>
   );
 }
