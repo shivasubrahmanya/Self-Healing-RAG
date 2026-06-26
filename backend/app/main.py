@@ -120,6 +120,29 @@ app.add_middleware(
 )
 
 
+# ---- Rate Limiting & Security Middleware ----
+from collections import defaultdict
+from fastapi import HTTPException
+
+# Simple in-memory rate limiter: 100 requests per minute
+RATE_LIMIT_WINDOW = 60 
+RATE_LIMIT_MAX_REQUESTS = 100
+request_counts = defaultdict(list)
+
+@app.middleware("http")
+async def rate_limit_middleware(request: Request, call_next):
+    client_ip = request.client.host if request.client else "unknown"
+    now = time.time()
+    
+    # Clean up old requests and check limit
+    request_counts[client_ip] = [t for t in request_counts[client_ip] if now - t < RATE_LIMIT_WINDOW]
+    if len(request_counts[client_ip]) >= RATE_LIMIT_MAX_REQUESTS:
+        return JSONResponse(status_code=429, content={"detail": "Too Many Requests"})
+        
+    request_counts[client_ip].append(now)
+    return await call_next(request)
+
+
 # ---- Request ID & Logging Middleware ----
 @app.middleware("http")
 async def request_logging_middleware(request: Request, call_next) -> Response:

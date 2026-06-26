@@ -21,10 +21,10 @@
   --accent-hover: #0ea5e9;
   --accent-light: rgba(56, 189, 248, 0.1);
 
-  --text-light: #f4f4f5;
-  --text-dark: #f4f4f5;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
+  --text-light: #ffffff;
+  --text-dark: #e2e8f0;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
 
   /* Status Colors */
   --color-emerald: #10B981;
@@ -61,14 +61,15 @@ body {
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-  background-image: radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
-                    radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.05) 0px, transparent 50%),
-                    linear-gradient(rgba(9, 9, 11, 0.85), rgba(9, 9, 11, 0.85)),
+  background-image: radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 60%),
+                    radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.15) 0px, transparent 60%),
+                    linear-gradient(rgba(5, 5, 8, 0.75), rgba(5, 5, 8, 0.90)),
                     url('/rag_network_background.png');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  background-color: #09090b;
+  background-color: #050508;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
 }
 
 /* ---- Layout Spacing ---- */
@@ -149,13 +150,13 @@ body {
 
 /* ---- Premium Telemetry Cards ---- */
 .telemetry-card {
-  background: rgba(18, 18, 20, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(10, 10, 15, 0.75);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   transform-style: preserve-3d;
   perspective: 1000px;
@@ -165,10 +166,10 @@ body {
 }
 
 .telemetry-card:hover {
-  background: rgba(28, 28, 31, 0.85);
-  border-color: rgba(56, 189, 248, 0.35);
-  transform: translateY(-4px) scale(1.02) rotateX(2deg) rotateY(1deg);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(56, 189, 248, 0.15);
+  background: rgba(15, 15, 20, 0.9);
+  border-color: rgba(56, 189, 248, 0.6);
+  transform: translateY(-8px) scale(1.03) rotateX(4deg) rotateY(-2deg);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(56, 189, 248, 0.3);
 }
 
 .glass-card {
@@ -597,8 +598,10 @@ body {
 }
 
 .hub-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--color-border);
+  background: rgba(10, 10, 15, 0.75);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 16px;
   padding: 32px;
   display: flex;
@@ -606,10 +609,12 @@ body {
   justify-content: space-between;
   min-height: 240px;
   text-decoration: none;
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
+  transform-style: preserve-3d;
+  perspective: 1000px;
 }
 
 .hub-card::after {
@@ -629,9 +634,9 @@ body {
 }
 
 .hub-card:hover {
-  border-color: rgba(99, 102, 241, 0.3);
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.15), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
+  border-color: rgba(99, 102, 241, 0.6);
+  transform: translateY(-8px) scale(1.03) rotateX(4deg) rotateY(-2deg);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(99, 102, 241, 0.3);
 }
 
 .hub-icon-wrapper {
