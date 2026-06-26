@@ -158,14 +158,14 @@ export default function Analytics() {
                 <stop offset="95%" stopColor="var(--accent)" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-            <XAxis dataKey="time" tick={{ fill: 'var(--text-secondary)', fontSize: 10, fontFamily: 'Inter' }} stroke="rgba(0,0,0,0.05)" />
-            <YAxis domain={[50, 100]} tick={{ fill: 'var(--text-secondary)', fontSize: 10, fontFamily: 'Inter' }} unit="%" stroke="rgba(0,0,0,0.05)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+            <XAxis dataKey="time" tick={{ fill: 'var(--text-secondary)', fontSize: 10, fontFamily: 'Inter' }} stroke="var(--color-border)" />
+            <YAxis domain={[50, 100]} tick={{ fill: 'var(--text-secondary)', fontSize: 10, fontFamily: 'Inter' }} unit="%" stroke="var(--color-border)" />
             <Tooltip
-              contentStyle={{ background: '#ffffff', border: '1px solid var(--color-border)', borderRadius: 8, fontSize: 12, color: 'var(--text-light)' }}
+              contentStyle={{ background: 'var(--bg-surface)', border: '1px solid var(--color-border)', borderRadius: 8, fontSize: 12, color: 'var(--text-light)' }}
               labelStyle={{ color: 'var(--text-secondary)' }}
             />
-            <Area type="monotone" dataKey="confidence" stroke="var(--accent)" fill="url(#aetherGlow)" strokeWidth={2} dot={{ r: 3, stroke: 'var(--accent)', fill: '#ffffff', strokeWidth: 1.5 }} name="Grounding Confidence" />
+            <Area type="monotone" dataKey="confidence" stroke="var(--accent)" fill="url(#aetherGlow)" strokeWidth={2} dot={{ r: 3, stroke: 'var(--accent)', fill: 'var(--bg-primary)', strokeWidth: 1.5 }} name="Grounding Confidence" />
           </AreaChart>
         </ResponsiveContainer>
       </div>

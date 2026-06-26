@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useId } from 'react';
-import { Send, Trash2, Bot, Loader, CheckCircle, XCircle, User, Sparkles } from 'lucide-react';
+import { Send, Trash2, Bot, Loader, CheckCircle, XCircle, User, Sparkles, Cpu, Database } from 'lucide-react';
 import { sendChat } from '../services/api';
 import { useAppStore } from '../store/appStore';
 import ConfidenceBadge from '../components/Chat/ConfidenceBadge';
@@ -72,15 +72,16 @@ export default function Chat() {
   };
 
   return (
-    <div style={{ display: 'flex', flex: 1, overflow: 'hidden', width: '100%', height: 'calc(100vh - 61px)' }}>
-      
-      {/* 1. Chat Workspace Pane (60%) */}
+    <div style={{ display: 'flex', flex: 1, overflow: 'hidden', width: '100%', height: '100%' }}>
+
+      {/* 1. Chat Workspace Pane (65%) */}
       <div style={{
-        flex: '0 0 60%',
+        flex: '0 0 65%',
         display: 'flex',
         flexDirection: 'column',
         borderRight: '1px solid var(--color-border)',
-        background: 'var(--bg-secondary)',
+        background: 'rgba(9, 9, 11, 0.4)',
+        backdropFilter: 'blur(12px)',
         height: '100%'
       }}>
         {/* Header */}
@@ -90,13 +91,13 @@ export default function Chat() {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          background: '#ffffff',
+          background: 'rgba(18, 18, 20, 0.6)',
         }}>
           <div>
-            <h1 style={{ 
-              fontSize: '18px', 
+            <h1 style={{
+              fontSize: '18px',
               fontWeight: 700,
-              color: 'var(--text-light)', 
+              color: 'var(--text-light)',
               lineHeight: 1.2
             }}>
               Query Session
@@ -131,7 +132,7 @@ export default function Chat() {
         <div style={{
           padding: '20px 32px',
           borderTop: '1px solid var(--color-border)',
-          background: '#ffffff',
+          background: 'rgba(18, 18, 20, 0.6)',
         }}>
           <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
             <input
@@ -156,13 +157,14 @@ export default function Chat() {
         </div>
       </div>
 
-      {/* 2. Side Diagnostics Panel (40%) */}
-      <div style={{ 
-        flex: '0 0 40%', 
-        display: 'flex', 
-        flexDirection: 'column', 
-        overflowY: 'auto', 
-        background: '#ffffff',
+      {/* 2. Side Diagnostics Panel (35%) */}
+      <div style={{
+        flex: '0 0 35%',
+        display: 'flex',
+        flexDirection: 'column',
+        overflowY: 'auto',
+        background: 'rgba(18, 18, 20, 0.55)',
+        backdropFilter: 'blur(16px)',
         height: '100%'
       }}>
         {/* Diagnostics Header */}
@@ -201,8 +203,8 @@ function ChatMessage({ message }) {
   return (
     <div
       className="animate-fade-in"
-      style={{ 
-        display: 'flex', 
+      style={{
+        display: 'flex',
         gap: 12,
         width: '100%',
         alignItems: 'flex-start',
@@ -234,11 +236,11 @@ function ChatMessage({ message }) {
         </div>
 
         <div className={isUser ? 'message-user' : 'message-assistant'} style={{ textAlign: 'left', padding: '12px 16px', borderRadius: 8 }}>
-          <p style={{ 
-            fontSize: '13px', 
-            lineHeight: 1.55, 
-            whiteSpace: 'pre-wrap', 
-            wordBreak: 'break-word', 
+          <p style={{
+            fontSize: '13px',
+            lineHeight: 1.55,
+            whiteSpace: 'pre-wrap',
+            wordBreak: 'break-word',
             color: 'var(--text-light)',
             fontWeight: 400
           }}>
@@ -258,11 +260,11 @@ function ChatMessage({ message }) {
             border: '1px solid var(--color-border)',
             borderRadius: 6
           }}>
-            <span style={{ 
-              fontSize: '9px', 
-              fontWeight: 700, 
-              color: message.is_grounded ? 'var(--color-emerald)' : 'var(--color-rose)', 
-              textTransform: 'uppercase', 
+            <span style={{
+              fontSize: '9px',
+              fontWeight: 700,
+              color: message.is_grounded ? 'var(--color-emerald)' : 'var(--color-rose)',
+              textTransform: 'uppercase',
               letterSpacing: '0.05em',
               display: 'flex',
               alignItems: 'center',
@@ -324,41 +326,64 @@ function TypingIndicator() {
 
 function EmptyState({ setQuery }) {
   const examples = [
-    'Explain the self-attention mechanism',
-    'What is the retrieval pipeline configuration?',
-    'How does hallucination scoring run?',
+    {
+      text: 'Explain the self-attention mechanism',
+      desc: 'Analyze query ambiguity and sub-query transformations.',
+      icon: <Sparkles size={16} />
+    },
+    {
+      text: 'What is the retrieval pipeline configuration?',
+      desc: 'Check index nodes, thresholds, and cross-encoder rerank windows.',
+      icon: <Database size={16} />
+    },
+    {
+      text: 'How does hallucination scoring run?',
+      desc: 'Audit grounding verification, judge agents, and latency traces.',
+      icon: <Cpu size={16} />
+    }
   ];
   return (
     <div style={{
       height: '100%', display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center', gap: 20,
-      maxWidth: 450, margin: '40px auto 0'
+      alignItems: 'center', justifyContent: 'center', gap: 28,
+      width: '100%', maxWidth: 840, margin: '0 auto'
     }}>
-      <div style={{ textAlign: 'center' }}>
-        <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-light)', marginBottom: 8 }}>
+      <div style={{ textAlign: 'center', maxWidth: 640 }}>
+        <h2 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--text-light)', marginBottom: 10 }}>
           Aether Query Engine
         </h2>
-        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
           Submit queries to traverse the vector index. If the initial search score falls below 0.70, autonomous healing rewrites and retries will optimize the results.
         </p>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, width: '100%', marginTop: 12 }}>
         {examples.map((ex) => (
           <button
-            key={ex}
-            onClick={() => setQuery(ex)}
-            className="btn-ghost"
+            key={ex.text}
+            onClick={() => setQuery(ex.text)}
+            className="btn-ghost suggest-query-btn"
             style={{
-              padding: '12px 16px',
-              borderRadius: '8px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
               justifyContent: 'space-between',
-              width: '100%',
-              fontSize: '12px',
-              background: '#ffffff'
+              padding: '18px',
+              borderRadius: '12px',
+              textAlign: 'left',
+              height: '145px',
+              width: '100%'
             }}
           >
-            <span>"{ex}"</span>
-            <span style={{ fontSize: 13, color: 'var(--accent)' }}>&rarr;</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%' }}>
+              <div style={{ color: 'var(--accent)', opacity: 0.85 }}>{ex.icon}</div>
+              <div style={{ fontSize: '13px', fontWeight: 650, color: 'var(--text-light)', lineHeight: 1.3 }}>
+                "{ex.text}"
+              </div>
+              <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+                {ex.desc}
+              </div>
+            </div>
+            <span style={{ fontSize: 13, color: 'var(--accent)', alignSelf: 'flex-end', marginTop: 'auto' }}>&rarr;</span>
           </button>
         ))}
       </div>

@@ -54,7 +54,7 @@ export default function DropZone() {
         borderRadius: '12px',
         padding: '48px 32px',
         textAlign: 'center',
-        background: isDragActive ? 'var(--accent-light)' : 'rgba(15, 23, 42, 0.01)',
+        background: isDragActive ? 'var(--accent-light)' : 'rgba(255, 255, 255, 0.01)',
         cursor: 'pointer',
         transition: 'all 0.25s ease',
         display: 'flex',

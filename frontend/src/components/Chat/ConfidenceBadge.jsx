@@ -57,7 +57,7 @@ export default function ConfidenceBadge({ confidence, size = 56 }) {
             fontFamily: 'Inter, sans-serif', 
             fontSize: 11, 
             fontWeight: 500, 
-            color: 'var(--text-dark)', 
+            color: 'var(--text-light)', 
             lineHeight: 1 
           }}>
             {pct}%
@@ -77,7 +77,7 @@ export default function ConfidenceBadge({ confidence, size = 56 }) {
         <div style={{ 
           fontSize: 11, 
           fontWeight: 450, 
-          color: 'var(--text-dark)', 
+          color: 'var(--text-light)', 
           textTransform: 'lowercase', 
           letterSpacing: '0.02em',
           marginTop: 1

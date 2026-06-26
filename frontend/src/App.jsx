@@ -10,7 +10,7 @@ import Admin from './pages/Admin';
 export default function App() {
   return (
     <BrowserRouter>
-      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-secondary)' }}>
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'transparent' }}>
         <Navbar />
         <main style={{ flex: 1, width: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <Routes>

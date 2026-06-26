@@ -41,7 +41,7 @@ export default function Hub() {
 
   return (
     <div className="page-container" style={{ padding: '32px' }}>
-      
+
       {/* 1. Split Hero Banner */}
       <div className="aether-hero-container">
         <div className="aether-hero-left">
@@ -65,25 +65,25 @@ export default function Hub() {
           <svg viewBox="0 0 320 220" className="mesh-container" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
             <defs>
               <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#4F46E5" />
-                <stop offset="100%" stopColor="#818CF8" />
+                <stop offset="0%" stopColor="#38bdf8" />
+                <stop offset="100%" stopColor="#6366f1" />
               </linearGradient>
             </defs>
             {/* SVG Network Lines */}
-            <line x1="50" y1="60" x2="160" y2="40" stroke="rgba(99, 102, 241, 0.25)" strokeWidth="1.5" strokeDasharray="3" />
-            <line x1="160" y1="40" x2="270" y2="80" stroke="rgba(99, 102, 241, 0.25)" strokeWidth="1.5" strokeDasharray="3" />
-            <line x1="50" y1="60" x2="110" y2="150" stroke="rgba(99, 102, 241, 0.25)" strokeWidth="1.5" strokeDasharray="3" />
-            <line x1="110" y1="150" x2="220" y2="170" stroke="rgba(99, 102, 241, 0.25)" strokeWidth="1.5" />
-            <line x1="220" y1="170" x2="270" y2="80" stroke="rgba(99, 102, 241, 0.25)" strokeWidth="1.5" strokeDasharray="3" />
-            <line x1="160" y1="40" x2="220" y2="170" stroke="rgba(99, 102, 241, 0.4)" strokeWidth="2" />
-            <line x1="160" y1="40" x2="110" y2="150" stroke="rgba(99, 102, 241, 0.2)" strokeWidth="1.5" />
-            
+            <line x1="50" y1="60" x2="160" y2="40" stroke="rgba(56, 189, 248, 0.25)" strokeWidth="1.5" strokeDasharray="3" />
+            <line x1="160" y1="40" x2="270" y2="80" stroke="rgba(56, 189, 248, 0.25)" strokeWidth="1.5" strokeDasharray="3" />
+            <line x1="50" y1="60" x2="110" y2="150" stroke="rgba(56, 189, 248, 0.25)" strokeWidth="1.5" strokeDasharray="3" />
+            <line x1="110" y1="150" x2="220" y2="170" stroke="rgba(56, 189, 248, 0.25)" strokeWidth="1.5" />
+            <line x1="220" y1="170" x2="270" y2="80" stroke="rgba(56, 189, 248, 0.25)" strokeWidth="1.5" strokeDasharray="3" />
+            <line x1="160" y1="40" x2="220" y2="170" stroke="rgba(56, 189, 248, 0.4)" strokeWidth="2" />
+            <line x1="160" y1="40" x2="110" y2="150" stroke="rgba(56, 189, 248, 0.2)" strokeWidth="1.5" />
+
             {/* Animated Nodes */}
-            <circle cx="50" cy="60" r="5" fill="#818CF8" />
-            <circle cx="160" cy="40" r="7" fill="url(#glowGrad)" style={{ filter: 'drop-shadow(0 0 6px #4F46E5)' }} />
-            <circle cx="270" cy="80" r="5" fill="#818CF8" />
-            <circle cx="110" cy="150" r="6" fill="#4F46E5" />
-            <circle cx="220" cy="170" r="8" fill="url(#glowGrad)" style={{ filter: 'drop-shadow(0 0 6px #4F46E5)' }} />
+            <circle cx="50" cy="60" r="5" fill="#38bdf8" />
+            <circle cx="160" cy="40" r="7" fill="url(#glowGrad)" style={{ filter: 'drop-shadow(0 0 6px #38bdf8)' }} />
+            <circle cx="270" cy="80" r="5" fill="#38bdf8" />
+            <circle cx="110" cy="150" r="6" fill="#6366f1" />
+            <circle cx="220" cy="170" r="8" fill="url(#glowGrad)" style={{ filter: 'drop-shadow(0 0 6px #38bdf8)' }} />
           </svg>
         </div>
       </div>
@@ -169,10 +169,10 @@ export default function Hub() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {recentEvents.length > 0 ? (
             recentEvents.map((evt, i) => (
-              <div key={i} style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'space-between', 
+              <div key={i} style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
                 padding: '12px 16px',
                 background: 'var(--bg-secondary)',
                 border: '1px solid var(--color-border)',
@@ -189,9 +189,9 @@ export default function Hub() {
               </div>
             ))
           ) : (
-            <div style={{ 
-              padding: '24px', 
-              textAlign: 'center', 
+            <div style={{
+              padding: '24px',
+              textAlign: 'center',
               color: 'var(--text-muted)',
               fontSize: '12px',
               fontStyle: 'italic',
