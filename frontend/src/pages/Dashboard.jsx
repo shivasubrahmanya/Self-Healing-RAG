@@ -74,10 +74,10 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="page-container" style={{ padding: '32px' }}>
+    <div className="page-container p-4 sm:p-6 md:p-8">
       
       {/* 1. Header description */}
-      <div style={{ marginBottom: 32 }}>
+      <div className="mb-8">
         <h1 style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text-light)', marginBottom: 6 }}>
           Knowledge Base
         </h1>
@@ -87,14 +87,9 @@ export default function Dashboard() {
       </div>
 
       {/* 2. Three Metric Counters */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        gap: 20,
-        marginBottom: 32
-      }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
         {/* Total Chunks */}
-        <div className="telemetry-card" style={{ padding: '20px' }}>
+        <div className="telemetry-card p-5">
           <div className="stat-ticker-label">TOTAL CHUNKS</div>
           <div className="serif-display stat-ticker-number">
             {metrics ? metrics.total_chunks_indexed.toLocaleString() : '0'}
@@ -105,7 +100,7 @@ export default function Dashboard() {
         </div>
 
         {/* Vector Count */}
-        <div className="telemetry-card" style={{ padding: '20px' }}>
+        <div className="telemetry-card p-5">
           <div className="stat-ticker-label">VECTOR COUNT</div>
           <div className="serif-display stat-ticker-number">
             {metrics ? metrics.total_chunks_indexed.toLocaleString() : '0'}
@@ -116,7 +111,7 @@ export default function Dashboard() {
         </div>
 
         {/* Last Sync */}
-        <div className="telemetry-card" style={{ padding: '20px', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div className="telemetry-card p-5 flex flex-col justify-between">
           <div>
             <div className="stat-ticker-label">LAST SYNC</div>
             <div className="serif-display stat-ticker-number" style={{ fontSize: '22px', fontWeight: 700, marginTop: 4 }}>
@@ -131,12 +126,12 @@ export default function Dashboard() {
       </div>
 
       {/* 3. Drag and Drop Zone */}
-      <div style={{ marginBottom: 32 }}>
+      <div className="mb-8">
         <DropZone />
       </div>
 
       {/* 4. Indexed Documents Progress List */}
-      <section className="telemetry-card" style={{ padding: '24px', marginBottom: 16 }}>
+      <section className="telemetry-card p-6 mb-4">
         <h2 className="eyebrow" style={{ color: 'var(--text-light)', marginBottom: 16 }}>
           Indexed Documents
         </h2>
@@ -144,20 +139,15 @@ export default function Dashboard() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {uploadedDocs.length > 0 ? (
             uploadedDocs.map((doc) => (
-              <div key={doc.document_id} style={{
-                background: 'var(--bg-secondary)',
-                border: '1px solid var(--color-border)',
-                borderRadius: '8px',
-                padding: '16px 20px'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <div key={doc.document_id} className="bg-zinc-900/45 border border-[var(--color-border)] rounded-lg p-4 md:p-5">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-2">
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <FileText size={16} style={{ color: 'var(--accent)' }} />
                     <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-light)' }}>{doc.document_name}</span>
                   </div>
-                  <span className="badge badge-emerald">Indexed</span>
+                  <span className="badge badge-emerald" style={{ flexShrink: 0 }}>Indexed</span>
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', display: 'flex', gap: 16 }}>
+                <div className="text-xs text-[var(--text-secondary)] flex flex-col sm:flex-row gap-2 sm:gap-4 break-all">
                   <span>Chunks: {doc.chunks_indexed || 45}</span>
                   <span>ID: {doc.document_id}</span>
                 </div>

@@ -104,10 +104,10 @@ export default function Admin() {
   const auditLogs = getAuditLogs();
 
   return (
-    <div className="page-container" style={{ padding: '32px' }}>
+    <div className="page-container p-4 sm:p-6 md:p-8">
       
       {/* 1. Header description */}
-      <div style={{ marginBottom: 32 }}>
+      <div className="mb-8">
         <h1 style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text-light)', marginBottom: 6 }}>
           Agent Config
         </h1>
@@ -117,7 +117,7 @@ export default function Admin() {
       </div>
 
       {/* Documents table */}
-      <section className="telemetry-card" style={{ padding: '0', borderRadius: '12px', overflow: 'hidden', marginBottom: 32 }}>
+      <section className="telemetry-card p-0 overflow-hidden mb-8">
         <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--color-border)' }}>
           <h2 className="eyebrow" style={{ color: 'var(--text-light)' }}>
             Ingested Collections ({uploadedDocs.length})
@@ -172,16 +172,16 @@ export default function Admin() {
       </section>
 
       {/* 3. Grid: Properties & Terminal Audit Log */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: 24, alignItems: 'start' }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         
         {/* System Properties */}
-        <section className="telemetry-card" style={{ padding: '24px' }}>
+        <section className="telemetry-card p-6">
           <h3 className="eyebrow" style={{ color: 'var(--text-light)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6 }}>
             <Cpu size={14} style={{ color: 'var(--text-secondary)' }} />
             System Properties
           </h3>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             {propertiesList.map(({ label, value }) => (
               <div key={label} style={{
                 background: 'var(--bg-secondary)',
@@ -201,7 +201,7 @@ export default function Admin() {
         </section>
 
         {/* Audit Log Console */}
-        <section className="telemetry-card" style={{ padding: '24px' }}>
+        <section className="telemetry-card p-6">
           <h3 className="eyebrow" style={{ color: 'var(--text-light)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6 }}>
             <Terminal size={14} style={{ color: 'var(--text-secondary)' }} />
             Audit Log Monitor

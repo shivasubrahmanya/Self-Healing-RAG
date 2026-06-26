@@ -17,11 +17,14 @@ export default function Navbar() {
   };
 
   return (
-    <header className="aether-navbar">
-      <div className="aether-navbar-left">
-        <NavLink to="/" className="aether-logo">
-          <div className="aether-logo-icon">A</div>
-          <span style={{ fontSize: '15px', fontWeight: 800, letterSpacing: '-0.02em' }}>Aether RAG</span>
+    <header className="aether-navbar flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0 py-3.5 md:py-4 px-6 md:px-8">
+      <div className="flex items-center justify-between w-full md:w-auto gap-4">
+        <NavLink to="/" className="aether-logo flex items-center gap-2.5" style={{ textDecoration: 'none' }}>
+          <img src="/logo.jpg" alt="ÆSCULAPIUS Logo" className="w-8 h-8 rounded-md object-cover border border-[#38bdf8]/30" />
+          <div className="flex flex-col">
+            <span style={{ fontSize: '15px', fontWeight: 800, letterSpacing: '0.02em', color: 'var(--text-light)', lineHeight: 1.1 }}>ÆSCULAPIUS</span>
+            <span style={{ fontSize: '8px', color: 'var(--text-secondary)', fontWeight: 600, letterSpacing: '0.05em' }}>SELF-HEALING RAG PLATFORM</span>
+          </div>
         </NavLink>
         
         <div className="system-pulse">
@@ -30,7 +33,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      <nav className="aether-navbar-center">
+      <nav className="flex gap-1 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none justify-start md:justify-center whitespace-nowrap">
         <NavLink to="/" className={({ isActive }) => `aether-nav-link ${isActive ? 'active' : ''}`} end style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <LayoutDashboard size={14} />
           <span>Dashboard</span>
@@ -53,7 +56,7 @@ export default function Navbar() {
         </NavLink>
       </nav>
 
-      <div className="aether-navbar-right">
+      <div className="flex items-center justify-center w-full md:w-auto">
         {getActionButton()}
       </div>
     </header>

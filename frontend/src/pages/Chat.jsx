@@ -72,18 +72,10 @@ export default function Chat() {
   };
 
   return (
-    <div style={{ display: 'flex', flex: 1, overflow: 'hidden', width: '100%', height: '100%' }}>
+    <div className="flex flex-col lg:flex-row flex-1 overflow-hidden w-full h-full">
 
       {/* 1. Chat Workspace Pane (65%) */}
-      <div style={{
-        flex: '0 0 65%',
-        display: 'flex',
-        flexDirection: 'column',
-        borderRight: '1px solid var(--color-border)',
-        background: 'rgba(9, 9, 11, 0.4)',
-        backdropFilter: 'blur(12px)',
-        height: '100%'
-      }}>
+      <div className="flex flex-col flex-1 lg:flex-initial lg:w-[65%] border-b lg:border-b-0 lg:border-r border-[var(--color-border)] bg-[#09090b]/40 backdrop-blur-md h-full min-w-0">
         {/* Header */}
         <div style={{
           padding: '16px 32px',
@@ -114,7 +106,7 @@ export default function Chat() {
         </div>
 
         {/* Messages List Area */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '32px' }}>
+        <div className="flex-1 overflow-y-auto p-4 md:p-8">
           {messages.length === 0 ? (
             <EmptyState setQuery={setQuery} />
           ) : (
@@ -158,15 +150,7 @@ export default function Chat() {
       </div>
 
       {/* 2. Side Diagnostics Panel (35%) */}
-      <div style={{
-        flex: '0 0 35%',
-        display: 'flex',
-        flexDirection: 'column',
-        overflowY: 'auto',
-        background: 'rgba(18, 18, 20, 0.55)',
-        backdropFilter: 'blur(16px)',
-        height: '100%'
-      }}>
+      <div className="flex flex-col w-full lg:w-[35%] overflow-y-auto bg-zinc-900/55 backdrop-blur-lg h-full">
         {/* Diagnostics Header */}
         <div style={{
           padding: '20px 24px',
@@ -231,7 +215,7 @@ function ChatMessage({ message }) {
       <div style={{ flex: 1, maxWidth: '80%', textAlign: isUser ? 'right' : 'left' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2, justifyContent: isUser ? 'flex-end' : 'flex-start' }}>
           <span className="eyebrow" style={{ fontSize: '9px', color: 'var(--text-muted)' }}>
-            {isUser ? 'user' : 'aether RAG pipeline'}
+            {isUser ? 'user' : 'æsculapius RAG pipeline'}
           </span>
         </div>
 
@@ -350,13 +334,13 @@ function EmptyState({ setQuery }) {
     }}>
       <div style={{ textAlign: 'center', maxWidth: 640 }}>
         <h2 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--text-light)', marginBottom: 10 }}>
-          Aether Query Engine
+          Æsculapius Query Engine
         </h2>
         <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
           Submit queries to traverse the vector index. If the initial search score falls below 0.70, autonomous healing rewrites and retries will optimize the results.
         </p>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, width: '100%', marginTop: 12 }}>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full mt-3">
         {examples.map((ex) => (
           <button
             key={ex.text}

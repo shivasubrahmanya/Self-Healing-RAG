@@ -40,14 +40,14 @@ export default function Hub() {
     }));
 
   return (
-    <div className="page-container" style={{ padding: '32px' }}>
+    <div className="page-container p-6 md:p-8 lg:p-12">
 
       {/* 1. Split Hero Banner */}
-      <div className="aether-hero-container">
-        <div className="aether-hero-left">
+      <div className="aether-hero-container flex flex-col lg:flex-row justify-between items-center p-6 md:p-11 text-center lg:text-left">
+        <div className="flex-1 max-w-xl mb-8 lg:mb-0 flex flex-col items-center lg:items-start">
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--accent-light)', padding: '4px 10px', borderRadius: 20, color: 'var(--accent)', fontSize: '11px', fontWeight: 600, marginBottom: 16 }}>
             <Activity size={10} className="healing-pulse" />
-            <span>AETHER OPERATIONS CORE</span>
+            <span>ÆSCULAPIUS OPERATIONS CORE</span>
           </div>
           <h1 className="aether-hero-title">
             Self-Healing RAG Operations
@@ -55,13 +55,13 @@ export default function Hub() {
           <p className="aether-hero-subtitle">
             Autonomous document intelligence with real-time error recovery and vector optimization for high-precision knowledge retrieval.
           </p>
-          <div className="aether-hero-buttons">
+          <div className="flex gap-3 justify-center lg:justify-start">
             <Link to="/chat" className="btn-primary" style={{ textDecoration: 'none' }}>Launch Hub</Link>
             <Link to="/dashboard" className="btn-ghost" style={{ textDecoration: 'none' }}>View Docs</Link>
           </div>
         </div>
 
-        <div className="aether-hero-right">
+        <div className="w-full max-w-[280px] lg:max-w-[320px] flex justify-center items-center">
           <svg viewBox="0 0 320 220" className="mesh-container" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
             <defs>
               <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -89,14 +89,9 @@ export default function Hub() {
       </div>
 
       {/* 2. Column Navigation Cards */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-        gap: 20,
-        marginBottom: 32
-      }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
         {/* Card 1: Query Engine */}
-        <div className="telemetry-card" style={{ padding: '20px' }}>
+        <div className="telemetry-card p-5">
           <div className="hub-icon-wrapper" style={{ width: 36, height: 36, marginBottom: 12 }}>
             <MessageSquare size={16} />
           </div>
@@ -111,7 +106,7 @@ export default function Hub() {
         </div>
 
         {/* Card 2: Knowledge Base */}
-        <div className="telemetry-card" style={{ padding: '20px' }}>
+        <div className="telemetry-card p-5">
           <div className="hub-icon-wrapper" style={{ width: 36, height: 36, marginBottom: 12 }}>
             <Database size={16} />
           </div>
@@ -126,7 +121,7 @@ export default function Hub() {
         </div>
 
         {/* Card 3: System Metrics */}
-        <div className="telemetry-card" style={{ padding: '20px' }}>
+        <div className="telemetry-card p-5">
           <div className="hub-icon-wrapper" style={{ width: 36, height: 36, marginBottom: 12 }}>
             <BarChart3 size={16} />
           </div>
@@ -141,7 +136,7 @@ export default function Hub() {
         </div>
 
         {/* Card 4: Agent Config */}
-        <div className="telemetry-card" style={{ padding: '20px' }}>
+        <div className="telemetry-card p-5">
           <div className="hub-icon-wrapper" style={{ width: 36, height: 36, marginBottom: 12 }}>
             <Sliders size={16} />
           </div>
@@ -157,8 +152,8 @@ export default function Hub() {
       </div>
 
       {/* 3. Recent Healing Events Section */}
-      <section className="telemetry-card" style={{ padding: '24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+      <section className="telemetry-card p-6">
+        <div className="flex justify-between items-center mb-4">
           <h2 className="eyebrow" style={{ color: 'var(--text-light)', display: 'flex', alignItems: 'center', gap: 6 }}>
             <Cpu size={14} />
             Recent Healing Events
@@ -166,24 +161,16 @@ export default function Hub() {
           <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Auto-updating</span>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div className="flex flex-col gap-2.5">
           {recentEvents.length > 0 ? (
             recentEvents.map((evt, i) => (
-              <div key={i} style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '12px 16px',
-                background: 'var(--bg-secondary)',
-                border: '1px solid var(--color-border)',
-                borderRadius: '8px'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div key={i} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 rounded-lg bg-zinc-900/40 border border-zinc-800/80 gap-3 w-full">
+                <div className="flex items-center gap-3 overflow-hidden min-w-0 w-full sm:w-auto">
                   <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'monospace' }}>{evt.time}</span>
-                  <span className="badge badge-violet" style={{ fontSize: '10px', padding: '2px 8px' }}>{evt.agent}</span>
-                  <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{evt.detail}</span>
+                  <span className="badge badge-violet" style={{ fontSize: '10px', padding: '2px 8px', flexShrink: 0 }}>{evt.agent}</span>
+                  <span className="truncate text-xs text-zinc-300 font-medium flex-1" title={evt.detail}>{evt.detail}</span>
                 </div>
-                <span className={`badge ${evt.status === 'resolved' ? 'badge-emerald' : 'badge-amber'}`} style={{ fontSize: '10px' }}>
+                <span className={`badge ${evt.status === 'resolved' ? 'badge-emerald' : 'badge-amber'}`} style={{ fontSize: '10px', flexShrink: 0 }}>
                   {evt.status}
                 </span>
               </div>

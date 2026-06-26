@@ -39,10 +39,10 @@ export default function Analytics() {
   };
 
   return (
-    <div className="page-container" style={{ padding: '32px' }}>
+    <div className="page-container p-4 sm:p-6 md:p-8">
       
       {/* 1. Header and Sync Button */}
-      <div style={{ marginBottom: 32, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 16 }}>
+      <div className="mb-8 flex justify-between items-end flex-wrap gap-4">
         <div>
           <h1 style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text-light)', marginBottom: 6 }}>
             Performance Analytics
@@ -58,14 +58,9 @@ export default function Analytics() {
       </div>
 
       {/* 2. High Level Metric Cards */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-        gap: 20,
-        marginBottom: 32
-      }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
         {/* Hallucination Rate */}
-        <div className="telemetry-card" style={{ padding: '20px' }}>
+        <div className="telemetry-card p-5">
           <div className="stat-ticker-label">Hallucination Rate</div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
             <span className="serif-display stat-ticker-number">
@@ -80,7 +75,7 @@ export default function Analytics() {
         </div>
 
         {/* Avg Latency */}
-        <div className="telemetry-card" style={{ padding: '20px' }}>
+        <div className="telemetry-card p-5">
           <div className="stat-ticker-label">Avg Latency</div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
             <span className="serif-display stat-ticker-number">
@@ -94,7 +89,7 @@ export default function Analytics() {
         </div>
 
         {/* Healing Success */}
-        <div className="telemetry-card" style={{ padding: '20px' }}>
+        <div className="telemetry-card p-5">
           <div className="stat-ticker-label">Healing Success</div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
             <span className="serif-display stat-ticker-number">
@@ -109,7 +104,7 @@ export default function Analytics() {
         </div>
 
         {/* Knowledge Drift */}
-        <div className="telemetry-card" style={{ padding: '20px' }}>
+        <div className="telemetry-card p-5">
           <div className="stat-ticker-label">Knowledge Drift</div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
             <span className="serif-display stat-ticker-number">
@@ -124,7 +119,7 @@ export default function Analytics() {
       </div>
 
       {/* 3. Large Chart: Average Confidence Over Time */}
-      <div className="telemetry-card" style={{ padding: '24px', marginBottom: 32 }}>
+      <div className="telemetry-card p-6 mb-8">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
           <h3 className="eyebrow" style={{ color: 'var(--text-light)', display: 'flex', alignItems: 'center', gap: 8 }}>
             <BarChart3 size={14} style={{ color: 'var(--text-secondary)' }} />
@@ -171,7 +166,7 @@ export default function Analytics() {
       </div>
 
       {/* 4. Recent Queries Table */}
-      <section className="telemetry-card" style={{ padding: '0', borderRadius: '12px', overflow: 'hidden' }}>
+      <section className="telemetry-card p-0 overflow-hidden mb-4">
         <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--color-border)' }}>
           <h2 className="eyebrow" style={{ color: 'var(--text-light)' }}>Recent Queries</h2>
         </div>

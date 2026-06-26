@@ -100,7 +100,7 @@ export default function DropZone() {
                 Drop Files Here
               </p>
               <p style={{ fontSize: '12px', color: 'var(--text-secondary)', maxWidth: '480px', margin: '0 auto 8px', lineHeight: 1.5 }}>
-                Support for PDF, MD, TXT, and JSON. Files are automatically chunked and embedded using Aether-Embed-v2.
+                Support for PDF, MD, TXT, and JSON. Files are automatically chunked and embedded using Æsculapius-Embed-v2.
               </p>
               <span style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: 600, textDecoration: 'underline' }}>
                 Or browse files from your computer
