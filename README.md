@@ -579,7 +579,7 @@ Self-Healing-RAG/
 ---
 
 <div align="center">
-  <i>Built with ❤️ by Shiva Subrahmanya</i>
+  <i>Built with ❤️ by Shivasubrahmanya</i>
   <br />
   <i>"Healing knowledge, one query at a time."</i>
 </div>
